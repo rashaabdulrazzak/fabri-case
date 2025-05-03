@@ -1,0 +1,92 @@
+.fabric-drawing-container {
+    display: flex;
+    gap: 20px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  .toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 250px;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  
+  .toolbar-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  .toolbar-section h3 {
+    margin: 0 0 10px 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #ddd;
+    font-size: 14px;
+    color: #555;
+  }
+  
+  .toolbar-button {
+    padding: 8px 12px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s;
+  }
+  
+  .toolbar-button:hover {
+    background: #f0f0f0;
+  }
+  
+  .toolbar-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .toolbar-button.active {
+    background: #e0e0ff;
+    border-color: #a0a0ff;
+  }
+  
+  .polygon-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px dashed #ddd;
+  }
+  
+  .instruction {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+  }
+  
+  .canvas-container {
+    flex-grow: 1;
+  }
+  
+  canvas {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  }
+  /* Add to FabricDrawing.css */
+.canvas-container {
+    position: relative;
+  }
+  
+  /* Style for the rectangle when selected */
+  .canvas-container .canvas-wrapper {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+  }
