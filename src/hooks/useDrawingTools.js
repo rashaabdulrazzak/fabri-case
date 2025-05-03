@@ -7,44 +7,85 @@ export const useDrawingTools = (canvas) => {
   const [isDrawingRect, setIsDrawingRect] = useState(false);
   const [rectStartPoint, setRectStartPoint] = useState(null);
   const [currentRect, setCurrentRect] = useState(null);
+  const [currentCircle, setCurrentCircle] = useState(null);
+  const [isPlacingCircle, setIsPlacingCircle] = useState(false);
 
-    // Add ESC key handler for canceling drawing
-    useEffect(() => {
-        const handleKeyDown = (e) => {
-          if (e.key === 'Escape') {
-            if (drawingMode === 'polygon' && polygonPoints.length > 0) {
-              cancelPolygon();
-            } else if (drawingMode === 'rectangle' && isDrawingRect) {
-              cancelRectangle();
-            } else {
-              setDrawingMode(null);
-            }
-          }
-        };
+
+     // Clean up all temporary drawing objects
+  const cleanUpDrawing = useCallback(() => {
+    if (!canvas) return;
+
+    // Remove temporary polygon lines and points
+    if (drawingMode === 'polygon') {
+      canvas.getObjects().forEach((obj) => {
+        if (obj.type === 'line' || (obj.type === 'circle' && obj.radius === 5)) {
+          canvas.remove(obj);
+        }
+      });
+      setPolygonPoints([]);
+    }
     
-        window.addEventListener('keydown', handleKeyDown);
-        return () => {
-          window.removeEventListener('keydown', handleKeyDown);
-        };
-      }, [drawingMode, polygonPoints, isDrawingRect]);
+    // Remove unfinished rectangle
+    if (drawingMode === 'rectangle' && currentRect) {
+      canvas.remove(currentRect);
+      setCurrentRect(null);
+    }
+    
+    // Remove unfinished circle
+    if (drawingMode === 'circle' &&  isPlacingCircle && currentCircle) {
+      canvas.remove(currentCircle);
+      setCurrentCircle(null);
+    }
+
+    setIsDrawingRect(false);
+    setIsPlacingCircle(false);
+    setRectStartPoint(null);
+    setDrawingMode(null);
+    canvas.renderAll();
+  }, [canvas, drawingMode, currentRect, isPlacingCircle, currentCircle]);
+
+   
+// Handle ESC key press
+useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' &&  (drawingMode || isPlacingCircle)) {
+        cleanUpDrawing();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [drawingMode, cleanUpDrawing, isPlacingCircle]);
+
+    // Draw a circle at the specified coordinates
   const drawCircle = useCallback((x, y) => {
     if (!canvas) return;
-    
-    const circle = new fabric.Circle({
-      radius: 30,
-      fill: 'transparent',
-      stroke: 'red',
-      strokeWidth: 2,
-      left: x - 30,
-      top: y - 30,
-      selectable: true,
-      hasControls: true,
-      hasBorders: true,
-    });
-    canvas.add(circle);
-    canvas.renderAll();
+   // Create preview circle
+   const circle = new fabric.Circle({
+    radius: 30,
+    fill: 'transparent',
+    stroke: 'red',
+    strokeWidth: 2,
+    left: x - 30,
+    top: y - 30,
+    selectable: true,
+    hasControls: true,
+    hasBorders: true,
+  });
+  
+  setCurrentCircle(circle);
+  canvas.add(circle);
+  setIsPlacingCircle(true);
+  canvas.renderAll();
   }, [canvas]);
 
+  const finalizeCircle = useCallback(() => {
+    setIsPlacingCircle(false);
+    setCurrentCircle(null);
+    setDrawingMode(null);
+  }, []);
   const drawRectangle = useCallback((x, y, width, height) => {
     if (!canvas) return null;
     
@@ -164,14 +205,19 @@ export const useDrawingTools = (canvas) => {
   }, [canvas, isDrawingRect, rectStartPoint, currentRect]);
 
   const handleCanvasClick = useCallback((e) => {
-    if (!canvas || !drawingMode) return;
+    if (!canvas || (!drawingMode && !isPlacingCircle)) return;
 
     const pointer = canvas.getPointer(e.e);
 
-    if (drawingMode === 'circle') {
-      drawCircle(pointer.x, pointer.y);
-      setDrawingMode(null);
-    } else if (drawingMode === 'polygon') {
+    if (drawingMode === 'circle' || isPlacingCircle) {
+        if (!isPlacingCircle) {
+          // First click - create preview circle
+          drawCircle(pointer.x, pointer.y);
+        } else {
+          // Second click - finalize placement
+          finalizeCircle();
+        }
+      } else if (drawingMode === 'polygon') {
       handlePolygonClick(pointer.x, pointer.y);
     } else if (drawingMode === 'rectangle') {
       if (!isDrawingRect) {
@@ -186,7 +232,7 @@ export const useDrawingTools = (canvas) => {
         setDrawingMode(null);
       }
     }
-  }, [canvas, drawingMode, drawCircle, handlePolygonClick, isDrawingRect, drawRectangle]);
+  }, [canvas, drawingMode, isPlacingCircle, drawCircle, finalizeCircle, handlePolygonClick, isDrawingRect, drawRectangle]);
 
   return {
     drawingMode,
@@ -197,5 +243,7 @@ export const useDrawingTools = (canvas) => {
     handleMouseMove,
     completePolygon,
     cancelPolygon,
+    cleanUpDrawing, 
+    isPlacingCircle,
   };
 };

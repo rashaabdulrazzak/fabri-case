@@ -18,6 +18,7 @@ const Toolbar = ({
   handleImagePanEnd,
   handleImagePanReset,
   handleImagePanCancel,
+  isPlacingCircle
 }) => {
   return (
     <div className="toolbar">
@@ -147,15 +148,34 @@ const Toolbar = ({
         </button>
 
         {drawingMode === 'polygon' && (
-          <div className="polygon-controls">
-            <button onClick={completePolygon} className="toolbar-button">
-              Complete Polygon
-            </button>
-            <div className="instruction">
-              Click to add points | ESC to cancel
-            </div>
-          </div>
-        )}
+  <div className="polygon-controls">
+    <button onClick={completePolygon} className="toolbar-button">
+      Complete Polygon
+    </button>
+    <div className="instruction">
+      Click to add points | ESC to cancel
+    </div>
+  </div>
+)}
+
+{drawingMode === 'rectangle' && (
+  <div className="instruction">
+    Click and drag to draw | ESC to cancel
+  </div>
+)}
+
+{drawingMode === 'circle' && !isPlacingCircle && (
+  <div className="instruction">
+    Click to start placing circle | ESC to cancel
+  </div>
+)}
+
+{isPlacingCircle && (
+  <div className="instruction">
+    Click to place circle | ESC to cancel
+  </div>
+)}
+
       </div>
     </div>
   );
