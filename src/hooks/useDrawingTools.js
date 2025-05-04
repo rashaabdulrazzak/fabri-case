@@ -124,7 +124,7 @@ useEffect(() => {
       if (prevPoints.length > 0) {
         const lastPoint = prevPoints[prevPoints.length - 1];
         const line = new fabric.Line([lastPoint.x, lastPoint.y, x, y], {
-          stroke: 'blue',
+          stroke: 'red',
           strokeWidth: 2,
           selectable: false,
         });
@@ -163,8 +163,8 @@ useEffect(() => {
     }
 
     const polygon = new fabric.Polygon(polygonPoints, {
-      fill: 'rgba(0, 0, 255, 0.2)',
-      stroke: 'blue',
+      fill: 'rgba(146, 12, 12, 0.2)',
+      stroke: 'red',
       strokeWidth: 2,
       selectable: true,
     });

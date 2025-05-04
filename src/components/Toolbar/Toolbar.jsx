@@ -138,25 +138,23 @@ const Toolbar = ({
           Draw Rectangle
         </button>
         <button
-          onClick={() => setDrawingMode("polygon")}
-          disabled={!imageUrl}
-          className={`toolbar-button ${
-            drawingMode === "polygon" ? "active" : ""
-          }`}
-        >
-          Draw Polygon
-        </button>
+    onClick={() => setDrawingMode('polygon')}
+    disabled={!imageUrl}
+    className={`toolbar-button ${drawingMode === 'polygon' ? 'active' : ''}`}
+  >
+    Add Nodule
+  </button>
 
-        {drawingMode === 'polygon' && (
-  <div className="polygon-controls">
-    <button onClick={completePolygon} className="toolbar-button">
-      Complete Polygon
-    </button>
-    <div className="instruction">
-      Click to add points | ESC to cancel
+  {drawingMode === 'polygon' && (
+    <div className="polygon-controls">
+      <button onClick={completePolygon} className="toolbar-button">
+        Complete Nodule
+      </button>
+      <div className="instruction">
+        Click to add nodule points | ESC to cancel
+      </div>
     </div>
-  </div>
-)}
+  )}
 
 {drawingMode === 'rectangle' && (
   <div className="instruction">
