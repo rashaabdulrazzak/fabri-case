@@ -1,98 +1,205 @@
 import React from 'react';
-import { fabric } from 'fabric';
-
+import { List, Card, Tag, Collapse, Badge } from 'antd';
+import {
+  CaretRightOutlined,
+  DotChartOutlined,
+  BorderOutlined
+} from '@ant-design/icons';
 import './ShapeInventory.css';
 
+const { Panel } = Collapse;
+
 const ShapeInventory = ({ canvas }) => {
-  const getShapeCounts = () => {
-    if (!canvas) return {};
+  const getShapeDetails = () => {
+    if (!canvas) return { 
+      nodules: [],
+      strapKasi: [],
+      zeminParenkim: [],
+      rectangles: [] 
+    };
     
-    const counts = {
-      nodule: 0,
-      'strap-kasi': 0,
-      'zemin-parenkim': 0,
-      rectangle: 0,
-      circle: 0
+    const shapes = {
+      nodules: [],
+      strapKasi: [],
+      zeminParenkim: [],
+      rectangles: []
     };
 
-    canvas.getObjects().forEach(obj => {
-      if (obj.dataType) {
-        // Count polygon types
-        if (obj.dataType === 'nodule') counts.nodule++;
-        if (obj.dataType === 'strap-kasi') counts['strap-kasi']++;
-        if (obj.dataType === 'zemin-parenkim') counts['zemin-parenkim']++;
-      } else {
-        // Count basic shapes
-        if (obj.type === 'rect') counts.rectangle++;
-        if (obj.type === 'circle') counts.circle++;
+    canvas.getObjects().forEach((obj, index) => {
+      const shapeItem = {
+        id: `${obj.type}-${index}`,
+        type: obj.dataType || obj.type,
+        object: obj
+      };
+
+      if (obj.dataType === 'nodule') {
+        shapes.nodules.push(shapeItem);
+      } else if (obj.dataType === 'strap-kasi') {
+        shapes.strapKasi.push(shapeItem);
+      } else if (obj.dataType === 'zemin-parenkim') {
+        shapes.zeminParenkim.push(shapeItem);
+      } else if (obj.type === 'rect') {
+        shapes.rectangles.push(shapeItem);
       }
+      // Circles are intentionally excluded
     });
 
-    return counts;
+    return shapes;
   };
 
-  const counts = getShapeCounts();
-
-  const handleShapeClick = (type) => {
+  const handleShapeClick = (obj) => {
     if (!canvas) return;
-    
-    let objects;
-    if (['nodule', 'strap-kasi', 'zemin-parenkim'].includes(type)) {
-      objects = canvas.getObjects().filter(obj => obj.dataType === type);
-    } else {
-      objects = canvas.getObjects().filter(obj => obj.type === type);
-    }
-
     canvas.discardActiveObject();
-    
-    if (objects.length > 0) {
-      if (objects.length === 1) {
-        canvas.setActiveObject(objects[0]);
-      } else {
-        const group = new fabric.ActiveSelection(objects, {
-          canvas: canvas,
-        });
-        canvas.setActiveObject(group);
-      }
-      canvas.requestRenderAll();
+    canvas.setActiveObject(obj);
+    canvas.requestRenderAll();
+  };
+
+  const shapes = getShapeDetails();
+
+  const getTypeIcon = (type) => {
+    switch(type) {
+      case 'rect': return <BorderOutlined />;
+      default: return <DotChartOutlined />;
+    }
+  };
+
+  const getTypeColor = (type) => {
+    switch(type) {
+      case 'nodule': return 'red';
+      case 'strap-kasi': return 'blue';
+      case 'zemin-parenkim': return 'purple';
+      case 'rect': return 'green';
+      default: return 'gray';
+    }
+  };
+
+  const getDisplayName = (type) => {
+    switch(type) {
+      case 'strap-kasi': return 'Strap Kasi';
+      case 'zemin-parenkim': return 'Zemin Parenkim';
+      case 'rect': return 'Rectangle';
+      default: return type.charAt(0).toUpperCase() + type.slice(1);
     }
   };
 
   return (
-    <div className="shape-inventory">
-      <h3>Shape Inventory</h3>
-      <div className="inventory-section">
-        <h4>Polygons</h4>
-        <ul>
-          <li onClick={() => handleShapeClick('nodule')}>
-            <span className="color-indicator red"></span>
-            Nodules: <strong>{counts.nodule}</strong>
-          </li>
-          <li onClick={() => handleShapeClick('strap-kasi')}>
-            <span className="color-indicator blue"></span>
-            Strap Kasi: <strong>{counts['strap-kasi']}</strong>
-          </li>
-          <li onClick={() => handleShapeClick('zemin-parenkim')}>
-            <span className="color-indicator purple"></span>
-            Zemin Parenkim: <strong>{counts['zemin-parenkim']}</strong>
-          </li>
-        </ul>
-      </div>
-      
-      <div className="inventory-section">
-        <h4>Basic Shapes</h4>
-        <ul>
-          <li onClick={() => handleShapeClick('rect')}>
-            <span className="color-indicator green"></span>
-            Rectangles: <strong>{counts.rectangle}</strong>
-          </li>
-          <li onClick={() => handleShapeClick('circle')}>
-            <span className="color-indicator orange"></span>
-            Circles: <strong>{counts.circle}</strong>
-          </li>
-        </ul>
-      </div>
-    </div>
+    <Card 
+      title="Shape Inventory" 
+      bordered={false}
+      className="shape-inventory"
+      headStyle={{ borderBottom: 0 }}
+    >
+      <Collapse 
+        bordered={false}
+        defaultActiveKey={['nodules', 'strapKasi', 'zeminParenkim', 'rectangles']}
+        expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+        className="inventory-collapse"
+      >
+        <Panel 
+          header={
+            <span>
+              Nodules <Badge 
+                count={shapes.nodules.length} 
+                style={{ backgroundColor: getTypeColor('nodule') }} 
+              />
+            </span>
+          } 
+          key="nodules"
+        >
+          <List
+            dataSource={shapes.nodules}
+            renderItem={item => (
+              <List.Item 
+                className="inventory-item"
+                onClick={() => handleShapeClick(item.object)}
+              >
+                <Tag color={getTypeColor(item.type)}>
+                  {getTypeIcon(item.type)} {getDisplayName(item.type)}
+                </Tag>
+              </List.Item>
+            )}
+          />
+        </Panel>
+
+        <Panel 
+          header={
+            <span>
+              Strap Kasi <Badge 
+                count={shapes.strapKasi.length} 
+                style={{ backgroundColor: getTypeColor('strap-kasi') }} 
+              />
+            </span>
+          } 
+          key="strapKasi"
+        >
+          <List
+            dataSource={shapes.strapKasi}
+            renderItem={item => (
+              <List.Item 
+                className="inventory-item"
+                onClick={() => handleShapeClick(item.object)}
+              >
+                <Tag color={getTypeColor(item.type)}>
+                  {getTypeIcon(item.type)} {getDisplayName(item.type)}
+                </Tag>
+              </List.Item>
+            )}
+          />
+        </Panel>
+
+        <Panel 
+          header={
+            <span>
+              Zemin Parenkim <Badge 
+                count={shapes.zeminParenkim.length} 
+                style={{ backgroundColor: getTypeColor('zemin-parenkim') }} 
+              />
+            </span>
+          } 
+          key="zeminParenkim"
+        >
+          <List
+            dataSource={shapes.zeminParenkim}
+            renderItem={item => (
+              <List.Item 
+                className="inventory-item"
+                onClick={() => handleShapeClick(item.object)}
+              >
+                <Tag color={getTypeColor(item.type)}>
+                  {getTypeIcon(item.type)} {getDisplayName(item.type)}
+                </Tag>
+              </List.Item>
+            )}
+          />
+        </Panel>
+
+        <Panel 
+          header={
+            <span>
+              Rectangles <Badge 
+                count={shapes.rectangles.length} 
+                style={{ backgroundColor: getTypeColor('rect') }} 
+              />
+            </span>
+          } 
+          key="rectangles"
+        >
+          <List
+            dataSource={shapes.rectangles}
+            renderItem={item => (
+              <List.Item 
+                className="inventory-item"
+                onClick={() => handleShapeClick(item.object)}
+              >
+                <Tag color={getTypeColor(item.type)}>
+                  {getTypeIcon(item.type)} {getDisplayName(item.type)}
+                </Tag>
+              </List.Item>
+            )}
+          />
+        </Panel>
+      </Collapse>
+    </Card>
   );
 };
 
