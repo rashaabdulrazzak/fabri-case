@@ -181,7 +181,9 @@ export const useDrawingTools = (canvas) => {
       strokeWidth: 2,
       selectable: true,
       // Add custom data attribute
-      dataType: drawingType
+      dataType: drawingType,
+      properties: {} // initialize empty properties
+
     });
 
     canvas.add(polygon);
