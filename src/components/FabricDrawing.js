@@ -23,8 +23,10 @@ const FabricDrawing = () => {
     isDrawingRect,
     handleCanvasClick,
     handleMouseMove,
-    completePolygon
-    ,
+    completePolygon,
+    drawingType,
+    setDrawingType,
+    
   } = useDrawingTools(canvas);
 
   // Canvas actions
@@ -120,6 +122,8 @@ const FabricDrawing = () => {
         imageUrl={imageUrl}
         drawingMode={drawingMode}
         setDrawingMode={setDrawingMode}
+        drawingType={drawingType}
+      setDrawingType={setDrawingType}
         completePolygon={completePolygon}
         handleImageUpload={handleImageUpload}
         handleImageReset={handleImageReset}

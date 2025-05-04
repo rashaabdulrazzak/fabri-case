@@ -18,7 +18,9 @@ const Toolbar = ({
   handleImagePanEnd,
   handleImagePanReset,
   handleImagePanCancel,
-  isPlacingCircle
+  isPlacingCircle,
+  drawingType,
+  setDrawingType,
 }) => {
   return (
     <div className="toolbar">
@@ -137,24 +139,57 @@ const Toolbar = ({
         >
           Draw Rectangle
         </button>
+  {/* Nodule Button (Red) */}
+  <button
+          onClick={() => {
+            setDrawingMode('polygon');
+            setDrawingType('nodule');
+          }}
+          disabled={!imageUrl}
+          className={`toolbar-button ${drawingType === 'nodule' ? 'active' : ''}`}
+          style={{ borderLeft: drawingType === 'nodule' ? '3px solid red' : '' }}
+        >
+          Add Nodule
+        </button>
+        
+        {/* Strap Kasi Button (Blue) */}
         <button
-    onClick={() => setDrawingMode('polygon')}
-    disabled={!imageUrl}
-    className={`toolbar-button ${drawingMode === 'polygon' ? 'active' : ''}`}
-  >
-    Add Nodule
-  </button>
+          onClick={() => {
+            setDrawingMode('polygon');
+            setDrawingType('strap-kasi');
+          }}
+          disabled={!imageUrl}
+          className={`toolbar-button ${drawingType === 'strap-kasi' ? 'active' : ''}`}
+          style={{ borderLeft: drawingType === 'strap-kasi' ? '3px solid blue' : '' }}
+        >
+          Strap Kasi
+        </button>
+        
+        {/* Zemin Parenkim Button (Purple) */}
+        <button
+          onClick={() => {
+            setDrawingMode('polygon');
+            setDrawingType('zemin-parenkim');
+          }}
+          disabled={!imageUrl}
+          className={`toolbar-button ${drawingType === 'zemin-parenkim' ? 'active' : ''}`}
+          style={{ borderLeft: drawingType === 'zemin-parenkim' ? '3px solid purple' : '' }}
+        >
+          Zemin Parenkim
+        </button>
+        
+        {drawingMode === 'polygon' && (
+          <div className="polygon-controls">
+            <button onClick={completePolygon} className="toolbar-button">
+              Complete {drawingType === 'nodule' ? 'Nodule' : 
+                      drawingType === 'strap-kasi' ? 'Strap Kasi' : 'Zemin Parenkim'}
+            </button>
+            <div className="instruction">
+              Click to add points | ESC to cancel
+            </div>
+          </div>
+        )}
 
-  {drawingMode === 'polygon' && (
-    <div className="polygon-controls">
-      <button onClick={completePolygon} className="toolbar-button">
-        Complete Nodule
-      </button>
-      <div className="instruction">
-        Click to add nodule points | ESC to cancel
-      </div>
-    </div>
-  )}
 
 {drawingMode === 'rectangle' && (
   <div className="instruction">

@@ -129,3 +129,28 @@
   .polygon-controls .toolbar-button:hover {
     background-color: rgba(255, 0, 0, 0.2);
   }
+  /* Add specific styles for different annotation types */
+.toolbar-button[data-type="nodule"] {
+    border-left: 3px solid red;
+  }
+  
+  .toolbar-button[data-type="strap-kasi"] {
+    border-left: 3px solid blue;
+  }
+  
+  .toolbar-button[data-type="zemin-parenkim"] {
+    border-left: 3px solid purple;
+  }
+  
+  /* Active state colors */
+  .toolbar-button.active[data-type="nodule"] {
+    background-color: rgba(255, 0, 0, 0.1);
+  }
+  
+  .toolbar-button.active[data-type="strap-kasi"] {
+    background-color: rgba(0, 0, 255, 0.1);
+  }
+  
+  .toolbar-button.active[data-type="zemin-parenkim"] {
+    background-color: rgba(128, 0, 128, 0.1);
+  }

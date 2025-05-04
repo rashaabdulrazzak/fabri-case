@@ -9,6 +9,35 @@ export const useDrawingTools = (canvas) => {
   const [currentRect, setCurrentRect] = useState(null);
   const [currentCircle, setCurrentCircle] = useState(null);
   const [isPlacingCircle, setIsPlacingCircle] = useState(false);
+  const [drawingType, setDrawingType] = useState(null); // 'nodule', 'strap-kasi', 'zemin-parenkim'
+
+  const getDrawingStyle = (type) => {
+    switch(type) {
+      case 'strap-kasi':
+        return {
+          fill: 'rgba(0, 0, 255, 0.2)', // Blue
+          stroke: 'blue',
+          pointColor: 'blue',
+          lineColor: 'blue'
+        };
+      case 'zemin-parenkim':
+        return {
+          fill: 'rgba(128, 0, 128, 0.2)', // Purple
+          stroke: 'purple',
+          pointColor: 'purple',
+          lineColor: 'purple'
+        };
+      case 'nodule':
+      default:
+        return {
+          fill: 'rgba(255, 0, 0, 0.2)', // Red
+          stroke: 'red',
+          pointColor: 'red',
+          lineColor: 'red'
+        };
+    }
+  };
+
 
   // Clean up all temporary drawing objects
   const cleanUpDrawing = useCallback(() => {
@@ -105,7 +134,9 @@ export const useDrawingTools = (canvas) => {
   }, [canvas]);
 
   const handlePolygonClick = useCallback((x, y) => {
-    if (!canvas) return;
+    if (!canvas || !drawingType) return;
+    
+    const style = getDrawingStyle(drawingType);
     
     setPolygonPoints((prevPoints) => {
       const updatedPoints = [...prevPoints, { x, y }];
@@ -113,7 +144,7 @@ export const useDrawingTools = (canvas) => {
       if (prevPoints.length > 0) {
         const lastPoint = prevPoints[prevPoints.length - 1];
         const line = new fabric.Line([lastPoint.x, lastPoint.y, x, y], {
-          stroke: 'red', // Changed to red
+          stroke: style.lineColor,
           strokeWidth: 2,
           selectable: false,
         });
@@ -122,7 +153,7 @@ export const useDrawingTools = (canvas) => {
 
       const point = new fabric.Circle({
         radius: 5,
-        fill: 'red', // Changed to red
+        fill: style.pointColor,
         left: x - 5,
         top: y - 5,
         selectable: false,
@@ -131,24 +162,29 @@ export const useDrawingTools = (canvas) => {
 
       return updatedPoints;
     });
-  }, [canvas]);
+  }, [canvas, drawingType]);
+
 
   const completePolygon = useCallback(() => {
-    if (!canvas || polygonPoints.length < 3) {
-      alert('A nodule needs at least 3 points');
+    if (!canvas || polygonPoints.length < 3 || !drawingType) {
+      alert('A shape needs at least 3 points');
       return;
     }
 
+    const style = getDrawingStyle(drawingType);
+    
     const polygon = new fabric.Polygon(polygonPoints, {
-      fill: 'rgba(255, 0, 0, 0.2)', // Red fill with 20% opacity
-      stroke: 'red', // Red border
+      fill: style.fill,
+      stroke: style.stroke,
       strokeWidth: 2,
       selectable: true,
+      // Add custom data attribute
+      dataType: drawingType
     });
 
     canvas.add(polygon);
 
-    // Remove temporary lines and points (already red)
+    // Remove temporary lines and points
     canvas.getObjects().forEach((obj) => {
       if (obj.type === 'line' || (obj.type === 'circle' && obj.radius === 5)) {
         canvas.remove(obj);
@@ -156,9 +192,11 @@ export const useDrawingTools = (canvas) => {
     });
 
     setPolygonPoints([]);
+    setDrawingType(null);
     setDrawingMode(null);
     canvas.renderAll();
-  }, [canvas, polygonPoints]);
+  }, [canvas, polygonPoints, drawingType]);
+
 
   const handleMouseMove = useCallback((e) => {
     if (!canvas || !isDrawingRect || !rectStartPoint || !currentRect) return;
@@ -218,5 +256,7 @@ export const useDrawingTools = (canvas) => {
     completePolygon,
     cleanUpDrawing,
     isPlacingCircle,
+    drawingType,
+    setDrawingType,
   };
 };
