@@ -1,8 +1,8 @@
-import React, { useRef, useState } from 'react';
-
+import React, { useRef, useState, useEffect } from 'react';
 import { useDrawingTools } from '../hooks/useDrawingTools';
 import { useCanvasActions } from "../hooks/useCanvasActions";
 import { useFabricCanvas } from '../hooks/useFabricCanvas';
+import { useCanvasState } from '../hooks/useCanvasState';
 import Toolbar from './Toolbar/Toolbar';
 import './FabricDrawing.css';
 
@@ -14,19 +14,26 @@ const FabricDrawing = () => {
 
   // Initialize canvas and load image
   const canvas = useFabricCanvas(canvasRef, imageUrl);
+  
+  // State management hook (should be the only one handling save/load)
+  const {
+    saveToLocalStorage,
+    loadFromLocalStorage
+  } = useCanvasState(canvas, imageUrl, setImageUrl);
 
   // Drawing tools functionality
   const {
     drawingMode,
     setDrawingMode,
+    drawingType,
+    setDrawingType,
     polygonPoints,
     isDrawingRect,
     handleCanvasClick,
     handleMouseMove,
     completePolygon,
-    drawingType,
-    setDrawingType,
-    
+    cleanUpDrawing,
+    isPlacingCircle,
   } = useDrawingTools(canvas);
 
   // Canvas actions
@@ -48,6 +55,8 @@ const FabricDrawing = () => {
       const reader = new FileReader();
       reader.onload = (event) => {
         setImageUrl(event.target.result);
+        // Clear existing annotations when new image is loaded
+        handleImageClear(event.target.result);
       };
       reader.readAsDataURL(file);
     }
@@ -65,35 +74,39 @@ const FabricDrawing = () => {
   };
 
   // Set up event listeners
-  React.useEffect(() => {
+  useEffect(() => {
     if (!canvas) return;
 
-    canvas.on('mouse:down', handleCanvasClick);
-    canvas.on('mouse:move', handleMouseMove);
-    
-    // Handle zoom
-    canvas.on('mouse:wheel', (opt) => {
-      const delta = opt.e.deltaY;
-      const zoom = canvas.getZoom();
-      const newZoom = zoom - delta / 200;
-      canvas.setZoom(newZoom);
-      opt.e.preventDefault();
-      opt.e.stopPropagation();
+    const eventHandlers = {
+      'mouse:down': handleCanvasClick,
+      'mouse:move': handleMouseMove,
+      'mouse:wheel': (opt) => {
+        const delta = opt.e.deltaY;
+        const zoom = canvas.getZoom();
+        const newZoom = zoom - delta / 200;
+        canvas.setZoom(newZoom);
+        opt.e.preventDefault();
+        opt.e.stopPropagation();
+      }
+    };
+
+    // Add all event listeners
+    Object.entries(eventHandlers).forEach(([event, handler]) => {
+      canvas.on(event, handler);
     });
-    
-    // Handle pan
+
+    // Pan handling
     let isDragging = false;
-    let lastPosX;
-    let lastPosY;
-    
+    let lastPosX, lastPosY;
+
     canvas.on('mouse:down', (opt) => {
-      if (opt.e.altKey === true) {
+      if (opt.e.altKey) {
         isDragging = true;
         lastPosX = opt.e.clientX;
         lastPosY = opt.e.clientY;
       }
     });
-    
+
     canvas.on('mouse:move', (opt) => {
       if (isDragging) {
         const e = opt.e;
@@ -105,16 +118,23 @@ const FabricDrawing = () => {
         lastPosY = e.clientY;
       }
     });
-    
+
     canvas.on('mouse:up', () => {
       isDragging = false;
     });
 
     return () => {
-      canvas.off('mouse:down', handleCanvasClick);
-      canvas.off('mouse:move', handleMouseMove);
+      // Remove all event listeners
+      Object.entries(eventHandlers).forEach(([event, handler]) => {
+        canvas.off(event, handler);
+      });
     };
   }, [canvas, handleCanvasClick, handleMouseMove]);
+
+  // Load saved state on initial render
+  useEffect(() => {
+    loadFromLocalStorage();
+  }, []); // Empty dependency array to run only once on mount
 
   return (
     <div className="fabric-drawing-container">
@@ -123,7 +143,7 @@ const FabricDrawing = () => {
         drawingMode={drawingMode}
         setDrawingMode={setDrawingMode}
         drawingType={drawingType}
-      setDrawingType={setDrawingType}
+        setDrawingType={setDrawingType}
         completePolygon={completePolygon}
         handleImageUpload={handleImageUpload}
         handleImageReset={handleImageReset}
@@ -136,6 +156,8 @@ const FabricDrawing = () => {
         handleImagePanStart={handleImagePanStart}
         handleImagePanEnd={handleImagePanEnd}
         handleImagePanReset={handleImagePanReset}
+        saveCanvasState={saveToLocalStorage}
+        loadSavedState={loadFromLocalStorage}
       />
       
       <div className="canvas-container">

@@ -154,3 +154,19 @@
   .toolbar-button.active[data-type="zemin-parenkim"] {
     background-color: rgba(128, 0, 128, 0.1);
   }
+
+  /* Add to FabricDrawing.css */
+.toolbar-section.save-load {
+    border-top: 1px solid #eee;
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+  
+  .save-load-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .save-load-buttons button {
+    flex: 1;
+  }

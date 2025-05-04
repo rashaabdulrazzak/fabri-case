@@ -5,6 +5,7 @@ export const useFabricCanvas = (canvasRef, imageUrl) => {
   const [canvas, setCanvas] = useState(null);
 
   // Initialize canvas
+  // Initialize canvas
   useEffect(() => {
     const canvasInstance = new fabric.Canvas(canvasRef.current, {
       backgroundColor: '#f0f0f0',
@@ -21,6 +22,13 @@ export const useFabricCanvas = (canvasRef, imageUrl) => {
   // Load image into canvas
   useEffect(() => {
     if (!canvas || !imageUrl) return;
+
+    // Clear existing objects when image changes
+    canvas.getObjects().forEach(obj => {
+      if (obj !== canvas.backgroundImage) {
+        canvas.remove(obj);
+      }
+    });
 
     fabric.Image.fromURL(imageUrl, (img) => {
       const scaleX = canvas.getWidth() / img.width;

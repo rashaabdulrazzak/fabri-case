@@ -21,6 +21,8 @@ const Toolbar = ({
   isPlacingCircle,
   drawingType,
   setDrawingType,
+  saveCanvasState,
+  loadSavedState,
 }) => {
   return (
     <div className="toolbar">
@@ -79,7 +81,22 @@ const Toolbar = ({
           Redo
         </button>
       </div>
-
+      <h3>Save/Load</h3>
+        <button 
+          onClick={saveCanvasState} 
+          className="toolbar-button"
+        >
+          Save Annotations
+        </button>
+        <button 
+          onClick={loadSavedState} 
+          className="toolbar-button"
+        >
+          Load Annotations
+        </button>
+        <div className="instruction">
+          Save/Load with current image
+        </div>
       <div className="toolbar-section">
         <h3>View</h3>
         <button

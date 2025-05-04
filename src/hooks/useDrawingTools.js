@@ -256,7 +256,7 @@ export const useDrawingTools = (canvas) => {
     completePolygon,
     cleanUpDrawing,
     isPlacingCircle,
-    drawingType,
-    setDrawingType,
+     drawingType,
+  setDrawingType,
   };
 };
