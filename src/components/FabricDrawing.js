@@ -3,6 +3,8 @@ import { useDrawingTools } from '../hooks/useDrawingTools';
 import { useCanvasActions } from "../hooks/useCanvasActions";
 import { useFabricCanvas } from '../hooks/useFabricCanvas';
 import { useCanvasState } from '../hooks/useCanvasState';
+import ShapeInventory from './ShapeInventory/ShapeInventory';
+
 import Toolbar from './Toolbar/Toolbar';
 import './FabricDrawing.css';
 
@@ -47,6 +49,30 @@ const FabricDrawing = () => {
     handleImageUndo,
     handleImageDownload,
   } = useCanvasActions(canvas);
+
+  // State to trigger inventory updates
+  const [inventoryVersion, setInventoryVersion] = useState(0);
+
+  // Function to force inventory update
+  const updateInventory = () => setInventoryVersion(v => v + 1);
+
+  // Update inventory when canvas changes
+  useEffect(() => {
+    if (!canvas) return;
+
+    const handleUpdate = () => updateInventory();
+    
+    canvas.on('object:added', handleUpdate);
+    canvas.on('object:removed', handleUpdate);
+    canvas.on('object:modified', handleUpdate);
+
+    return () => {
+      canvas.off('object:added', handleUpdate);
+      canvas.off('object:removed', handleUpdate);
+      canvas.off('object:modified', handleUpdate);
+    };
+  }, [canvas]);
+
 
   // Handle image upload
   const handleImageUpload = (e) => {
@@ -138,6 +164,7 @@ const FabricDrawing = () => {
 
   return (
     <div className="fabric-drawing-container">
+         <ShapeInventory canvas={canvas} key={inventoryVersion} />
       <Toolbar
         imageUrl={imageUrl}
         drawingMode={drawingMode}

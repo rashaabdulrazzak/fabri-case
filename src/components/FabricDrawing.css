@@ -1,11 +1,18 @@
 .fabric-drawing-container {
     display: flex;
-    gap: 20px;
-    padding: 20px;
-    max-width: 1200px;
-    margin: 0 auto;
+  height: 100vh;
+  }
+  .main-content {
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
   }
   
+  .canvas-container {
+    flex-grow: 1;
+    padding: 20px;
+    overflow: auto;
+  }
   .toolbar {
     display: flex;
     flex-direction: column;
@@ -70,19 +77,20 @@
     font-style: italic;
   }
   
-  .canvas-container {
-    flex-grow: 1;
-  }
+  
   
   canvas {
     border: 1px solid #ccc;
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0,0,0,0.1);
   }
-  /* Add to FabricDrawing.css */
+  /* Add to FabricDrawing.css 
+  .canvas-container {
+    flex-grow: 1;
+  }
 .canvas-container {
     position: relative;
-  }
+  }*/
   
   /* Style for the rectangle when selected */
   .canvas-container .canvas-wrapper {

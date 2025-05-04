@@ -99,6 +99,7 @@ export const useDrawingTools = (canvas) => {
       selectable: true,
       hasControls: true,
       hasBorders: true,
+      dataType: 'circle' // Custom data attribute
     });
     
     setCurrentCircle(circle);
@@ -127,6 +128,7 @@ export const useDrawingTools = (canvas) => {
       selectable: true,
       hasControls: true,
       hasBorders: true,
+       dataType: 'rectangle'
     });
     
     canvas.add(rect);

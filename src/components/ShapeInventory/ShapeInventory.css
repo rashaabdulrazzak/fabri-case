@@ -1,0 +1,56 @@
+.shape-inventory {
+    width: 250px;
+    padding: 15px;
+    background: #f8f8f8;
+    border-right: 1px solid #ddd;
+    height: 100vh;
+    overflow-y: auto;
+  }
+  
+  .shape-inventory h3 {
+    margin-top: 0;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+  
+  .inventory-section {
+    margin-bottom: 20px;
+  }
+  
+  .inventory-section h4 {
+    margin: 15px 0 8px 0;
+    color: #666;
+    font-size: 14px;
+  }
+  
+  .shape-inventory ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .shape-inventory li {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  
+  .shape-inventory li:hover {
+    background-color: #f0f0f0;
+  }
+  
+  .color-indicator {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    margin-right: 10px;
+  }
+  
+  .color-indicator.red { background-color: red; }
+  .color-indicator.blue { background-color: blue; }
+  .color-indicator.purple { background-color: purple; }
+  .color-indicator.green { background-color: green; }
+  .color-indicator.orange { background-color: orange; }
