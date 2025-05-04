@@ -1,4 +1,4 @@
-import { useCallback, useState,useEffect } from 'react';
+import { useCallback, useState, useEffect } from 'react';
 import { fabric } from 'fabric';
 
 export const useDrawingTools = (canvas) => {
@@ -10,8 +10,7 @@ export const useDrawingTools = (canvas) => {
   const [currentCircle, setCurrentCircle] = useState(null);
   const [isPlacingCircle, setIsPlacingCircle] = useState(false);
 
-
-     // Clean up all temporary drawing objects
+  // Clean up all temporary drawing objects
   const cleanUpDrawing = useCallback(() => {
     if (!canvas) return;
 
@@ -32,7 +31,7 @@ export const useDrawingTools = (canvas) => {
     }
     
     // Remove unfinished circle
-    if (drawingMode === 'circle' &&  isPlacingCircle && currentCircle) {
+    if (drawingMode === 'circle' && isPlacingCircle && currentCircle) {
       canvas.remove(currentCircle);
       setCurrentCircle(null);
     }
@@ -44,11 +43,10 @@ export const useDrawingTools = (canvas) => {
     canvas.renderAll();
   }, [canvas, drawingMode, currentRect, isPlacingCircle, currentCircle]);
 
-   
-// Handle ESC key press
-useEffect(() => {
+  // Handle ESC key press
+  useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape' &&  (drawingMode || isPlacingCircle)) {
+      if (e.key === 'Escape' && (drawingMode || isPlacingCircle)) {
         cleanUpDrawing();
       }
     };
@@ -59,26 +57,25 @@ useEffect(() => {
     };
   }, [drawingMode, cleanUpDrawing, isPlacingCircle]);
 
-    // Draw a circle at the specified coordinates
   const drawCircle = useCallback((x, y) => {
     if (!canvas) return;
-   // Create preview circle
-   const circle = new fabric.Circle({
-    radius: 30,
-    fill: 'transparent',
-    stroke: 'red',
-    strokeWidth: 2,
-    left: x - 30,
-    top: y - 30,
-    selectable: true,
-    hasControls: true,
-    hasBorders: true,
-  });
-  
-  setCurrentCircle(circle);
-  canvas.add(circle);
-  setIsPlacingCircle(true);
-  canvas.renderAll();
+    
+    const circle = new fabric.Circle({
+      radius: 30,
+      fill: 'transparent',
+      stroke: 'red',
+      strokeWidth: 2,
+      left: x - 30,
+      top: y - 30,
+      selectable: true,
+      hasControls: true,
+      hasBorders: true,
+    });
+    
+    setCurrentCircle(circle);
+    canvas.add(circle);
+    setIsPlacingCircle(true);
+    canvas.renderAll();
   }, [canvas]);
 
   const finalizeCircle = useCallback(() => {
@@ -86,6 +83,7 @@ useEffect(() => {
     setCurrentCircle(null);
     setDrawingMode(null);
   }, []);
+
   const drawRectangle = useCallback((x, y, width, height) => {
     if (!canvas) return null;
     
@@ -105,16 +103,7 @@ useEffect(() => {
     canvas.add(rect);
     return rect;
   }, [canvas]);
-  const cancelRectangle = useCallback(() => {
-    if (!canvas || !currentRect) return;
-    
-    canvas.remove(currentRect);
-    setIsDrawingRect(false);
-    setRectStartPoint(null);
-    setCurrentRect(null);
-    setDrawingMode(null);
-    canvas.renderAll();
-  }, [canvas, currentRect]);
+
   const handlePolygonClick = useCallback((x, y) => {
     if (!canvas) return;
     
@@ -124,7 +113,7 @@ useEffect(() => {
       if (prevPoints.length > 0) {
         const lastPoint = prevPoints[prevPoints.length - 1];
         const line = new fabric.Line([lastPoint.x, lastPoint.y, x, y], {
-          stroke: 'red',
+          stroke: 'red', // Changed to red
           strokeWidth: 2,
           selectable: false,
         });
@@ -133,7 +122,7 @@ useEffect(() => {
 
       const point = new fabric.Circle({
         radius: 5,
-        fill: 'blue',
+        fill: 'red', // Changed to red
         left: x - 5,
         top: y - 5,
         selectable: false,
@@ -143,35 +132,23 @@ useEffect(() => {
       return updatedPoints;
     });
   }, [canvas]);
-  const cancelPolygon = useCallback(() => {
-    if (!canvas) return;
-    
-    canvas.getObjects().forEach((obj) => {
-      if (obj.type === 'line' || (obj.type === 'circle' && obj.radius === 5)) {
-        canvas.remove(obj);
-      }
-    });
-    setPolygonPoints([]);
-    setDrawingMode(null);
-    canvas.renderAll();
-  }, [canvas]);
 
   const completePolygon = useCallback(() => {
     if (!canvas || polygonPoints.length < 3) {
-      alert('A polygon needs at least 3 points');
+      alert('A nodule needs at least 3 points');
       return;
     }
 
     const polygon = new fabric.Polygon(polygonPoints, {
-      fill: 'rgba(146, 12, 12, 0.2)',
-      stroke: 'red',
+      fill: 'rgba(255, 0, 0, 0.2)', // Red fill with 20% opacity
+      stroke: 'red', // Red border
       strokeWidth: 2,
       selectable: true,
     });
 
     canvas.add(polygon);
 
-    // Remove temporary lines and small circles
+    // Remove temporary lines and points (already red)
     canvas.getObjects().forEach((obj) => {
       if (obj.type === 'line' || (obj.type === 'circle' && obj.radius === 5)) {
         canvas.remove(obj);
@@ -182,7 +159,6 @@ useEffect(() => {
     setDrawingMode(null);
     canvas.renderAll();
   }, [canvas, polygonPoints]);
-
 
   const handleMouseMove = useCallback((e) => {
     if (!canvas || !isDrawingRect || !rectStartPoint || !currentRect) return;
@@ -210,14 +186,12 @@ useEffect(() => {
     const pointer = canvas.getPointer(e.e);
 
     if (drawingMode === 'circle' || isPlacingCircle) {
-        if (!isPlacingCircle) {
-          // First click - create preview circle
-          drawCircle(pointer.x, pointer.y);
-        } else {
-          // Second click - finalize placement
-          finalizeCircle();
-        }
-      } else if (drawingMode === 'polygon') {
+      if (!isPlacingCircle) {
+        drawCircle(pointer.x, pointer.y);
+      } else {
+        finalizeCircle();
+      }
+    } else if (drawingMode === 'polygon') {
       handlePolygonClick(pointer.x, pointer.y);
     } else if (drawingMode === 'rectangle') {
       if (!isDrawingRect) {
@@ -242,8 +216,7 @@ useEffect(() => {
     handleCanvasClick,
     handleMouseMove,
     completePolygon,
-    cancelPolygon,
-    cleanUpDrawing, 
+    cleanUpDrawing,
     isPlacingCircle,
   };
 };
