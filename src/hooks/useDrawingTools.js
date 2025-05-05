@@ -134,39 +134,6 @@ export const useDrawingTools = (canvas) => {
     canvas.add(rect);
     return rect;
   }, [canvas]);
-
-  const handlePolygonClick = useCallback((x, y) => {
-    if (!canvas || !drawingType) return;
-    
-    const style = getDrawingStyle(drawingType);
-    
-    setPolygonPoints((prevPoints) => {
-      const updatedPoints = [...prevPoints, { x, y }];
-
-      if (prevPoints.length > 0) {
-        const lastPoint = prevPoints[prevPoints.length - 1];
-        const line = new fabric.Line([lastPoint.x, lastPoint.y, x, y], {
-          stroke: style.lineColor,
-          strokeWidth: 2,
-          selectable: false,
-        });
-        canvas.add(line);
-      }
-
-      const point = new fabric.Circle({
-        radius: 5,
-        fill: style.pointColor,
-        left: x - 5,
-        top: y - 5,
-        selectable: false,
-      });
-      canvas.add(point);
-
-      return updatedPoints;
-    });
-  }, [canvas, drawingType]);
-
-
   const completePolygon = useCallback(() => {
     if (!canvas || polygonPoints.length < 3 || !drawingType) {
       alert('A shape needs at least 3 points');
@@ -201,6 +168,50 @@ export const useDrawingTools = (canvas) => {
     canvas.renderAll();
   }, [canvas, polygonPoints, drawingType]);
 
+
+  const handlePolygonClick = useCallback((x, y) => {
+    const newPoint = { x, y };
+  
+    if (polygonPoints.length > 0) {
+      const firstPoint = polygonPoints[0];
+      const distance = Math.hypot(firstPoint.x - x, firstPoint.y - y);
+  
+      // Check if the user clicked near the first point (within 10px)
+      if (distance < 10) {
+        completePolygon();
+        return;
+      }
+    }
+  
+    // Draw a small circle at the point
+    const circle = new fabric.Circle({
+      left: x,
+      top: y,
+      radius: 5,
+      fill: 'red',
+      selectable: false,
+      originX: 'center',
+      originY: 'center',
+    });
+  
+    canvas.add(circle);
+  
+    // Draw a line from the previous point
+    if (polygonPoints.length > 0) {
+      const prevPoint = polygonPoints[polygonPoints.length - 1];
+      const line = new fabric.Line([prevPoint.x, prevPoint.y, x, y], {
+        stroke: 'red',
+        selectable: false,
+      });
+      canvas.add(line);
+    }
+  
+    setPolygonPoints([...polygonPoints, newPoint]);
+  }, [canvas, polygonPoints, completePolygon]);
+  
+
+
+ 
 
   const handleMouseMove = useCallback((e) => {
     if (!canvas || !isDrawingRect || !rectStartPoint || !currentRect) return;
