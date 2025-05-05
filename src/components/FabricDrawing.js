@@ -157,6 +157,41 @@ const FabricDrawing = () => {
     };
   }, [canvas, handleCanvasClick, handleMouseMove]);
 
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if ((e.key === 'Delete' || e.key === 'Backspace') && canvas) {
+        const activeObj = canvas.getActiveObject();
+        if (activeObj) {
+          const highlightId = (obj) => obj.get('highlightId') === highlightId;
+  
+          canvas.remove(activeObj);
+  
+          if (highlightId) {
+           const toRemove = canvas.getObjects().filter(
+              (obj) => obj.get && obj.get('highlightId') === highlightId
+            );
+  
+            console.log('Found for removal:', toRemove); // ✅ Debug check
+  
+            toRemove.forEach((obj) => canvas.remove(obj));
+          }
+  
+          canvas.discardActiveObject();
+          canvas.renderAll();
+        }
+      }
+    };
+  
+    window.addEventListener('keydown', handleKeyDown);
+  
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [canvas]);
+  
+  
+  
+  
   // Load saved state on initial render
   useEffect(() => {
     loadFromLocalStorage();
