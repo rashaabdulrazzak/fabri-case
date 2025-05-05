@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { List, Card, Collapse, Badge, Select, message, Form, Button } from 'antd';
+import { List, Card, Collapse, Badge, Select, message, Form, Button,Descriptions } from 'antd';
 import {
   CaretRightOutlined,
   DotChartOutlined,
@@ -13,6 +13,8 @@ const { Option } = Select;
 const ShapeInventory = ({ canvas }) => {
   const [selectedShape, setSelectedShape] = useState(null);
   const [shapeProperties, setShapeProperties] = useState({});
+  const [activePanel, setActivePanel] = useState(['nodules', 'strapKasi', 'zeminParenkim']);
+
   const [form] = Form.useForm();
 
   const compositionOptions = [
@@ -88,6 +90,19 @@ const ShapeInventory = ({ canvas }) => {
     
     // Initialize form with existing properties
     form.setFieldsValue(shape.properties || {});
+    switch (shape.type) {
+        case 'nodule':
+          setActivePanel(['nodules']);
+          break;
+        case 'strap-kasi':
+          setActivePanel(['strapKasi']);
+          break;
+        case 'zemin-parenkim':
+          setActivePanel(['zeminParenkim']);
+          break;
+        default:
+          setActivePanel([]);
+      }
   };
 
   const handlePropertiesSave = () => {
@@ -100,6 +115,9 @@ const ShapeInventory = ({ canvas }) => {
     // Update the shape in canvas
     canvas.renderAll();
     message.success('Properties saved successfully');
+    setSelectedShape(null);
+    setShapeProperties({});
+    form.resetFields();
   };
 
   const shapes = getShapeDetails();
@@ -202,6 +220,77 @@ const ShapeInventory = ({ canvas }) => {
         return null;
     }
   };
+  const renderPropertyViewer = () => {
+    if (!selectedShape?.properties) return null;
+
+    return (
+      <Descriptions bordered column={1} size="small">
+        {Object.entries(selectedShape.properties).map(([key, value]) => (
+          <Descriptions.Item key={key} label={key.charAt(0).toUpperCase() + key.slice(1)}>
+            {value}
+          </Descriptions.Item>
+        ))}
+      </Descriptions>
+    );
+  };
+    const renderShapeList = (shapes) => {
+        return (
+        <List
+            dataSource={shapes}
+            renderItem={item => (
+            <List.Item 
+                className={`inventory-item ${selectedShape?.id === item.id ? 'selected' : ''}`}
+                onClick={() => handleShapeClick(item)}
+            >
+                <div>
+                    <span className="shape-label">
+                        {item.type.charAt(0).toUpperCase() + item.type.slice(1)} {shapes.indexOf(item) + 1}
+                    </span>
+                    {selectedShape?.id === item.id && selectedShape?.properties && (
+  <div
+    style={{
+      marginTop: "8px",
+      padding: "8px",
+      background: "#f5f5f5",
+      borderRadius: "4px",
+    }}
+  >
+    {Object.entries(selectedShape.properties)
+      .filter(([key]) => !["measured", "needleInNodule", "notSuitableForUse"].includes(key))
+      .map(([key, value]) => (
+        <div
+          key={key}
+          style={{
+            display: "flex",
+            fontSize: "12px",
+            marginBottom: "4px",
+            lineHeight: "1.4",
+          }}
+        >
+          <span
+            style={{
+              fontWeight: "500",
+              minWidth: "100px",
+              color: "#666",
+            }}
+          >
+            {key === "heterojenitesi"
+              ? "Heterojenite"
+              : key.charAt(0).toUpperCase() + key.slice(1)}
+            :
+          </span>
+          <span style={{ color: "#222" }}>{value}</span>
+        </div>
+      ))}
+  </div>
+)}
+
+                </div>
+            </List.Item>
+            )}
+        />
+        );
+    };
 
   return (
     <div className="inventory-container">
@@ -212,8 +301,9 @@ const ShapeInventory = ({ canvas }) => {
         headStyle={{ borderBottom: 0 }}
       >
         <Collapse 
-          bordered={false}
-          defaultActiveKey={['nodules', 'strapKasi', 'zeminParenkim']}
+           bordered={false}
+           activeKey={activePanel}
+           onChange={keys => setActivePanel(keys)}
           expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
           className="inventory-collapse"
         >
@@ -228,19 +318,8 @@ const ShapeInventory = ({ canvas }) => {
             } 
             key="nodules"
           >
-            <List
-              dataSource={shapes.nodules}
-              renderItem={item => (
-                <List.Item 
-                  className={`inventory-item ${selectedShape?.id === item.id ? 'selected' : ''}`}
-                  onClick={() => handleShapeClick(item)}
-                >
-                  <span className="shape-label">
-                    Nodule {shapes.nodules.indexOf(item) + 1}
-                  </span>
-                </List.Item>
-              )}
-            />
+         
+            {renderShapeList(shapes.nodules)}
           </Panel>
 
           <Panel 
@@ -280,19 +359,8 @@ const ShapeInventory = ({ canvas }) => {
             } 
             key="zeminParenkim"
           >
-            <List
-              dataSource={shapes.zeminParenkim}
-              renderItem={item => (
-                <List.Item 
-                  className={`inventory-item ${selectedShape?.id === item.id ? 'selected' : ''}`}
-                  onClick={() => handleShapeClick(item)}
-                >
-                  <span className="shape-label">
-                    Zemin Parenkim {shapes.zeminParenkim.indexOf(item) + 1}
-                  </span>
-                </List.Item>
-              )}
-            />
+           
+            {renderShapeList(shapes.zeminParenkim)}
           </Panel>
         </Collapse>
       </Card>

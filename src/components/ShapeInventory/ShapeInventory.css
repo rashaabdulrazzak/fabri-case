@@ -73,3 +73,45 @@
   .property-editor .ant-form-item {
     margin-bottom: 16px;
   }
+  .inventory-container {
+    width: 320px;
+    height: 100vh;
+    overflow-y: auto;
+    background: #fff;
+    border-right: 1px solid #f0f0f0;
+  }
+  
+  .shape-container {
+    width: 100%;
+  }
+  
+  .property-viewer {
+    margin-top: 8px;
+    padding: 8px;
+    background: #f5f5f5;
+    border-radius: 4px;
+  }
+  
+  .property-item {
+    display: flex;
+    font-size: 12px;
+    margin-bottom: 4px;
+    line-height: 1.4;
+  }
+  
+  .property-label {
+    font-weight: 500;
+    min-width: 100px;
+    color: #666;
+  }
+  
+  .property-value {
+    color: #222;
+  }
+  
+  .no-properties {
+    color: #999;
+    font-style: italic;
+    margin: 8px 0;
+    font-size: 12px;
+  }

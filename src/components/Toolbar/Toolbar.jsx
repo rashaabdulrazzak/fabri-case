@@ -26,7 +26,7 @@ const Toolbar = ({
 }) => {
   return (
     <div className="toolbar">
-      <div className="toolbar-section">
+    {/*  <div className="toolbar-section">
         <h3>File</h3>
         <input
           type="file"
@@ -134,7 +134,7 @@ const Toolbar = ({
         >
           Reset View
         </button>
-      </div>
+      </div>*/}
 
       <div className="toolbar-section">
         <h3>Drawing</h3>
