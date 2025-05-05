@@ -6,9 +6,10 @@ export const useCanvasState = (canvas, imageUrl, setImageUrl) => {
     if (!canvas || !imageUrl) return null;
 
     const objects = canvas.getObjects().map(obj => ({
-      ...obj.toObject(),
-      dataType: obj.dataType,
-    }));
+        ...obj.toObject(['dataType', 'properties']), // explicitly include custom props
+        dataType: obj.dataType,
+        properties: obj.properties,
+      }));
 
     return {
       imageUrl,
@@ -46,6 +47,7 @@ export const useCanvasState = (canvas, imageUrl, setImageUrl) => {
             fabric.util.enlivenObjects(state.objects, (enlivenedObjects) => {
               enlivenedObjects.forEach(obj => {
                 if (obj.dataType) obj.set('dataType', obj.dataType);
+                if (obj.properties) obj.set('properties', obj.properties);
                 canvas.add(obj);
               });
               
