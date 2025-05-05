@@ -142,46 +142,42 @@ export const useDrawingTools = (canvas) => {
     }
   
     const style = getDrawingStyle(drawingType);
-    const highlightId = `highlight-${Date.now()}`;
   
     const polygon = new fabric.Polygon(polygonPoints, {
       fill: style.fill,
       stroke: style.stroke,
       strokeWidth: 2,
       selectable: true,
-      objectCaching: false,
       dataType: drawingType,
       properties: {},
     });
   
+    // Create a visible "first point" marker
     const firstPoint = polygonPoints[0];
-    const highlightCircle = new fabric.Circle({
-      left: firstPoint.x - 6,
-      top: firstPoint.y - 6,
-      radius: 6,
+    const startCircle = new fabric.Circle({
+      left: firstPoint.x,
+      top: firstPoint.y,
+      radius: 5,
       fill: 'green',
+      originX: 'center',
+      originY: 'center',
       selectable: false,
       evented: false,
-      highlightId, // 💡 Custom tag for tracking
     });
   
-    // Optionally attach the ID to the group too
-    const group = new fabric.Group([polygon], {
+    // Group the polygon and circle together
+    const group = new fabric.Group([polygon, startCircle], {
       selectable: true,
-      objectCaching: false,
-      hasControls: true,
-      highlightId, // 🏷 Link group to highlight
+      hasControls: false,
+      dataType: drawingType,
+      properties: {},
     });
   
     canvas.add(group);
-    canvas.add(highlightCircle);
   
-    // Remove temporary helpers
+    // Remove temporary lines and small points
     canvas.getObjects().forEach((obj) => {
-      if (
-        obj.type === 'line' ||
-        (obj.type === 'circle' && obj.radius === 5 && !obj.highlightId)
-      ) {
+      if (obj.type === 'line' || (obj.type === 'circle' && obj.radius === 5)) {
         canvas.remove(obj);
       }
     });
@@ -191,6 +187,7 @@ export const useDrawingTools = (canvas) => {
     setDrawingMode(null);
     canvas.renderAll();
   }, [canvas, polygonPoints, drawingType]);
+  
   
   
   const handlePolygonClick = useCallback((x, y) => {
