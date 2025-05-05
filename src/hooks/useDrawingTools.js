@@ -168,7 +168,6 @@ export const useDrawingTools = (canvas) => {
     canvas.renderAll();
   }, [canvas, polygonPoints, drawingType]);
 
-
   const handlePolygonClick = useCallback((x, y) => {
     const newPoint = { x, y };
   
@@ -176,19 +175,19 @@ export const useDrawingTools = (canvas) => {
       const firstPoint = polygonPoints[0];
       const distance = Math.hypot(firstPoint.x - x, firstPoint.y - y);
   
-      // Check if the user clicked near the first point (within 10px)
       if (distance < 10) {
         completePolygon();
         return;
       }
     }
   
-    // Draw a small circle at the point
+    const isFirstPoint = polygonPoints.length === 0;
+  
     const circle = new fabric.Circle({
       left: x,
       top: y,
-      radius: 5,
-      fill: 'red',
+      radius: isFirstPoint ? 7 : 5,
+      fill: isFirstPoint ? 'green' : 'red',
       selectable: false,
       originX: 'center',
       originY: 'center',
@@ -196,7 +195,6 @@ export const useDrawingTools = (canvas) => {
   
     canvas.add(circle);
   
-    // Draw a line from the previous point
     if (polygonPoints.length > 0) {
       const prevPoint = polygonPoints[polygonPoints.length - 1];
       const line = new fabric.Line([prevPoint.x, prevPoint.y, x, y], {
@@ -206,12 +204,9 @@ export const useDrawingTools = (canvas) => {
       canvas.add(line);
     }
   
-    setPolygonPoints([...polygonPoints, newPoint]);
+    setPolygonPoints(prev => [...prev, newPoint]);
   }, [canvas, polygonPoints, completePolygon]);
   
-
-
- 
 
   const handleMouseMove = useCallback((e) => {
     if (!canvas || !isDrawingRect || !rectStartPoint || !currentRect) return;

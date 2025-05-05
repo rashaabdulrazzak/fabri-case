@@ -26,7 +26,7 @@ const Toolbar = ({
 }) => {
   return (
     <div className="toolbar">
-    {/*  <div className="toolbar-section">
+      {/*  <div className="toolbar-section">
         <h3>File</h3>
         <input
           type="file"
@@ -156,76 +156,75 @@ const Toolbar = ({
         >
           Draw Rectangle
         </button>
-  {/* Nodule Button (Red) */}
-  <button
+        {/* Nodule Button (Red) */}
+        <button
           onClick={() => {
-            setDrawingMode('polygon');
-            setDrawingType('nodule');
+            setDrawingMode("polygon");
+            setDrawingType("nodule");
           }}
           disabled={!imageUrl}
-          className={`toolbar-button ${drawingType === 'nodule' ? 'active' : ''}`}
-          style={{ borderLeft: drawingType === 'nodule' ? '3px solid red' : '' }}
+          className={`toolbar-button ${
+            drawingType === "nodule" ? "active" : ""
+          }`}
+          style={{
+            borderLeft: drawingType === "nodule" ? "3px solid red" : "",
+          }}
         >
           Add Nodule
         </button>
-        
+
         {/* Strap Kasi Button (Blue) */}
         <button
           onClick={() => {
-            setDrawingMode('polygon');
-            setDrawingType('strap-kasi');
+            setDrawingMode("polygon");
+            setDrawingType("strap-kasi");
           }}
           disabled={!imageUrl}
-          className={`toolbar-button ${drawingType === 'strap-kasi' ? 'active' : ''}`}
-          style={{ borderLeft: drawingType === 'strap-kasi' ? '3px solid blue' : '' }}
+          className={`toolbar-button ${
+            drawingType === "strap-kasi" ? "active" : ""
+          }`}
+          style={{
+            borderLeft: drawingType === "strap-kasi" ? "3px solid blue" : "",
+          }}
         >
           Strap Kasi
         </button>
-        
+
         {/* Zemin Parenkim Button (Purple) */}
         <button
           onClick={() => {
-            setDrawingMode('polygon');
-            setDrawingType('zemin-parenkim');
+            setDrawingMode("polygon");
+            setDrawingType("zemin-parenkim");
           }}
           disabled={!imageUrl}
-          className={`toolbar-button ${drawingType === 'zemin-parenkim' ? 'active' : ''}`}
-          style={{ borderLeft: drawingType === 'zemin-parenkim' ? '3px solid purple' : '' }}
+          className={`toolbar-button ${
+            drawingType === "zemin-parenkim" ? "active" : ""
+          }`}
+          style={{
+            borderLeft:
+              drawingType === "zemin-parenkim" ? "3px solid purple" : "",
+          }}
         >
           Zemin Parenkim
         </button>
-        
-        {drawingMode === 'polygon' && (
-          <div className="polygon-controls">
-            <button onClick={completePolygon} className="toolbar-button">
-              Complete {drawingType === 'nodule' ? 'Nodule' : 
-                      drawingType === 'strap-kasi' ? 'Strap Kasi' : 'Zemin Parenkim'}
-            </button>
-            <div className="instruction">
-              Click to add points | ESC to cancel
-            </div>
+
+        {drawingMode === "rectangle" && (
+          <div className="instruction">
+            Click and drag to draw | ESC to cancel
           </div>
         )}
 
+        {drawingMode === "circle" && !isPlacingCircle && (
+          <div className="instruction">
+            Click to start placing circle | ESC to cancel
+          </div>
+        )}
 
-{drawingMode === 'rectangle' && (
-  <div className="instruction">
-    Click and drag to draw | ESC to cancel
-  </div>
-)}
-
-{drawingMode === 'circle' && !isPlacingCircle && (
-  <div className="instruction">
-    Click to start placing circle | ESC to cancel
-  </div>
-)}
-
-{isPlacingCircle && (
-  <div className="instruction">
-    Click to place circle | ESC to cancel
-  </div>
-)}
-
+        {isPlacingCircle && (
+          <div className="instruction">
+            Click to place circle | ESC to cancel
+          </div>
+        )}
       </div>
     </div>
   );
