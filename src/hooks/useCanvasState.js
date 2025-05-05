@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { fabric } from 'fabric';
 
-export const useCanvasState = (canvas, imageUrl, setImageUrl) => {
-  const saveCanvasState = useCallback(() => {
+export const useCanvasState = (canvas, customProps = ['dataType', 'properties', 'id'],imageUrl, setImageUrl) => {
+ /* const saveCanvasState = useCallback(() => {
     if (!canvas || !imageUrl) return null;
 
     const objects = canvas.getObjects().map(obj => ({
@@ -68,7 +68,50 @@ export const useCanvasState = (canvas, imageUrl, setImageUrl) => {
 
       checkImageLoaded();
     });
-  }, [canvas, setImageUrl]);
+  }, [canvas, setImageUrl]);*/
+  const saveCanvasState = useCallback(() => {
+    if (!canvas) return null;
+
+    const objects = canvas.getObjects().map(obj =>
+      obj.toObject([...customProps])
+    );
+
+    return {
+      objects,
+      viewportTransform: canvas.viewportTransform,
+    };
+  }, [canvas, customProps]);
+
+  // Load canvas state
+  const loadCanvasState = useCallback(async (savedState) => {
+    if (!canvas || !savedState) return;
+
+    const state = typeof savedState === 'string'
+      ? JSON.parse(savedState)
+      : savedState;
+
+    return new Promise((resolve) => {
+      fabric.util.enlivenObjects(state.objects || [], (enlivenedObjects) => {
+        canvas.getObjects().forEach(obj => {
+          canvas.remove(obj);
+        });
+
+        enlivenedObjects.forEach((obj) => {
+          customProps.forEach((prop) => {
+            if (obj[prop]) obj.set(prop, obj[prop]);
+          });
+          canvas.add(obj);
+        });
+
+        if (state.viewportTransform) {
+          canvas.setViewportTransform(state.viewportTransform);
+        }
+
+        canvas.renderAll();
+        resolve();
+      });
+    });
+  }, [canvas, customProps]);
 
   const saveToLocalStorage = useCallback(() => {
     const state = saveCanvasState();

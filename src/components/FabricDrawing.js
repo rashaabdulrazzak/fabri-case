@@ -21,7 +21,7 @@ const FabricDrawing = () => {
   const {
     saveToLocalStorage,
     loadFromLocalStorage
-  } = useCanvasState(canvas, imageUrl, setImageUrl);
+  } = useCanvasState(canvas, ['dataType', 'properties', 'id'],imageUrl, setImageUrl);
 
   // Drawing tools functionality
   const {
