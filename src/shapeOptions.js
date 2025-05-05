@@ -5,11 +5,15 @@ export const shapeOptionsMap = {
     shape: ['Wider-than-tall', 'Taller-than-wide'],
     margin: ['Smooth', 'Irregular', 'Lobulated', 'Extrathyroidal extension'],
     echogenicFoci: ['None', 'Macrocalcifications', 'Peripheral (rim) calcifications', 'Punctate echogenic foci'],
+    measured: ['Yes', 'No'],
+    needleInNodule: ['Yes', 'No'],
+    notSuitable: ['Yes', 'No'],
+    // For zemin-parenkim
     heterojenite: ['Homojen', 'Heterojen']
   };
   
   export const propertyFields = {
-    nodule: ['composition', 'echogenicity', 'shape', 'margin', 'echogenicFoci'],
+    nodule: ['composition', 'echogenicity', 'shape', 'margin', 'echogenicFoci','measured','needleInNodule','notSuitable'],
     'zemin-parenkim': ['heterojenite']
   };
     export const shapeOptions = {
@@ -134,4 +138,16 @@ export const shapeOptionsMap = {
             'Punctate echogenic foci': '',
         },
     };
-    
+   export  const fieldLabels = {
+        measured: "Measured",
+        needleInNodule: "Needle in Nodule",
+        notSuitable: "Not Suitable",
+        composition: "Composition",
+        echogenicity: "Echogenicity",
+        shape: "Shape",
+        margin: "Margin",
+        echogenicFoci: "Echogenic Foci",
+        heterojenite: "Heterojenite",
+        shapeProperties: "Shape Properties",
+      };
+      

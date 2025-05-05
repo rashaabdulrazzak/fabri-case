@@ -1,30 +1,43 @@
-import React from 'react';
-import { Form, Select, Button } from 'antd';
+import { Select, Form, Checkbox, Input,Button } from "antd";
+
 const { Option } = Select;
 
-const ShapeOptionsPanel = ({ fields, form, shapeOptionsMap, onSave }) => {
-  if (!fields || fields.length === 0) {
-    return <p>No properties to edit for this shape type</p>;
-  }
+const ShapeOptionsPanel = ({ fields, form, shapeOptionsMap, fieldLabels,onSave }) => {
+    const checkboxFields = ["measured", "needleInNodule", "notSuitable"];
 
-  return (
-    <div className="property-editor">
-      <Form form={form} layout="vertical">
-        {fields.map(field => (
-          <Form.Item key={field} name={field} label={field.charAt(0).toUpperCase() + field.slice(1)}>
-            <Select>
-              {shapeOptionsMap[field]?.map(opt => (
-                <Option key={opt} value={opt}>{opt}</Option>
-              ))}
-            </Select>
+    
+  
+    return (
+      <Form form={form} layout="vertical" onFinish={onSave}>
+        {fields.map((field) => (
+          <Form.Item
+            key={field}
+            name={field}
+            label={fieldLabels[field] || field}
+            valuePropName={checkboxFields.includes(field) ? "checked" : "value"}
+          >
+            {checkboxFields.includes(field) ? (
+              <Checkbox />
+            ) : shapeOptionsMap[field] ? (
+              <Select>
+                {shapeOptionsMap[field].map((opt) => (
+                  <Select.Option key={opt} value={opt}>
+                    {opt}
+                  </Select.Option>
+                ))}
+              </Select>
+            ) : (
+              <Input />
+            )}
           </Form.Item>
         ))}
-        <Button type="primary" onClick={onSave}>
-          Save Properties
-        </Button>
+        <Form.Item>
+          <Button type="primary" htmlType="submit">
+            Save
+          </Button>
+        </Form.Item>
       </Form>
-    </div>
-  );
+    );
 };
 
 export default ShapeOptionsPanel;

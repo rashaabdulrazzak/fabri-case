@@ -14,9 +14,9 @@ import "./ShapeInventory.css";
 import ShapeList from "../ShapeList/ShapeList"; // Ensure this path is correct based on your project structure
 import ShapeOptionsPanel from "../ShapeOptionsPanel/ShapeOptionsPanel"; // update the path based on your file structure
 
-import { shapeOptionsMap } from "../../shapeOptions"; // Ensure this path is correct based on your project structure
+import { shapeOptionsMap ,propertyFields,fieldLabels} from "../../shapeOptions"; // Ensure this path is correct based on your project structure
 const { Panel } = Collapse;
-const { Option } = Select;
+
 
 const ShapeInventory = ({ canvas }) => {
   const [selectedShape, setSelectedShape] = useState(null);
@@ -29,10 +29,7 @@ const ShapeInventory = ({ canvas }) => {
 
   const [form] = Form.useForm();
 
-  const propertyFields = {
-    nodule: ["composition", "echogenicity", "shape", "margin", "echogenicFoci"],
-    "zemin-parenkim": ["heterojenite"],
-  };
+  
   const getShapeDetails = () => {
     if (!canvas)
       return {
@@ -138,6 +135,7 @@ const ShapeInventory = ({ canvas }) => {
         fields={fields}
         form={form}
         shapeOptionsMap={shapeOptionsMap}
+        fieldLabels={fieldLabels}
         onSave={handlePropertiesSave}
       />
     );
