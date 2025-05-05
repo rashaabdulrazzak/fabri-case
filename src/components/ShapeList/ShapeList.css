@@ -1,0 +1,63 @@
+/* ShapeList.css */
+
+.inventory-item {
+    padding: 10px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    border: 1px solid transparent;
+    margin-bottom: 8px;
+  }
+  
+  .inventory-item:hover {
+    background-color: #f7f9fc;
+    border-color: #dbeafe;
+  }
+  
+  .inventory-item.selected {
+    background-color: #e0f2fe;
+    border-left: 4px solid #3b82f6;
+    padding-left: 8px;
+    font-weight: 600;
+  }
+  
+  .shape-label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin-bottom: 4px;
+    display: block;
+  }
+  
+  .shape-details {
+    margin-top: 6px;
+    padding-left: 6px;
+    font-size: 0.9rem;
+    color: #4b5563;
+  }
+  
+  .property-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 2px 0;
+    border-bottom: 1px dashed #e5e7eb;
+  }
+  
+  .property-key {
+    font-weight: 500;
+    color: #374151;
+  }
+  
+  .property-value {
+    color: #111827;
+  }
+  
+  /* Add clarity for booleans */
+  .property-value.boolean-true {
+    color: #16a34a; /* Green */
+  }
+  
+  .property-value.boolean-false {
+    color: #dc2626; /* Red */
+  }
+  

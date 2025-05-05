@@ -1,15 +1,7 @@
 import {
-  List,
-  Card,
-  Collapse,
-  Badge,
-  Select,
-  message,
-  Form,
-  Button,
-  Descriptions,
+  List
 } from "antd";
-import React, { useState, useEffect } from "react";
+import './ShapeList.css';
 const ShapeList = ({ shapes, selectedShape, onClick }) => (
   <List
     dataSource={shapes}
@@ -34,9 +26,17 @@ const ShapeList = ({ shapes, selectedShape, onClick }) => (
                       : key.charAt(0).toUpperCase() + key.slice(1)}
                     :
                   </span>
-                  <span className="property-value">
-                    {typeof value === "boolean" ? (value ? "✅" : "❌") : value}
-                  </span>
+                  <span
+  className={`property-value ${
+    typeof value === 'boolean'
+      ? value
+        ? 'boolean-true'
+        : 'boolean-false'
+      : ''
+  }`}
+>
+  {typeof value === 'boolean' ? (value ? '✅ Yes' : '❌ No') : value}
+</span>
                 </div>
               ))}
             </div>
