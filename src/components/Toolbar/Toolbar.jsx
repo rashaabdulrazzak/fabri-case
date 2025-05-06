@@ -26,6 +26,96 @@ const Toolbar = ({
 }) => {
   return (
     <div className="toolbar">
+         <div className="toolbar-section">
+        <h3>Drawing</h3>
+        <button
+          onClick={() => setDrawingMode("circle")}
+          disabled={!imageUrl}
+          className={`toolbar-button ${
+            drawingMode === "circle" ? "active" : ""
+          }`}
+        >
+          Draw Circle
+        </button>
+        <button
+          onClick={() => setDrawingMode("rectangle")}
+          disabled={!imageUrl}
+          className={`toolbar-button ${
+            drawingMode === "rectangle" ? "active" : ""
+          }`}
+        >
+          Draw Rectangle
+        </button>
+        {/* Nodule Button (Red) */}
+        <button
+          onClick={() => {
+            setDrawingMode("polygon");
+            setDrawingType("nodule");
+          }}
+          disabled={!imageUrl}
+          className={`toolbar-button ${
+            drawingType === "nodule" ? "active" : ""
+          }`}
+          style={{
+            borderLeft: drawingType === "nodule" ? "3px solid red" : "",
+          }}
+        >
+          Add Nodule
+        </button>
+
+        {/* Strap Kasi Button (Blue) */}
+        <button
+          onClick={() => {
+            setDrawingMode("polygon");
+            setDrawingType("strap-kasi");
+          }}
+          disabled={!imageUrl}
+          className={`toolbar-button ${
+            drawingType === "strap-kasi" ? "active" : ""
+          }`}
+          style={{
+            borderLeft: drawingType === "strap-kasi" ? "3px solid blue" : "",
+          }}
+        >
+          Strap Kasi
+        </button>
+
+        {/* Zemin Parenkim Button (Purple) */}
+        <button
+          onClick={() => {
+            setDrawingMode("polygon");
+            setDrawingType("zemin-parenkim");
+          }}
+          disabled={!imageUrl}
+          className={`toolbar-button ${
+            drawingType === "zemin-parenkim" ? "active" : ""
+          }`}
+          style={{
+            borderLeft:
+              drawingType === "zemin-parenkim" ? "3px solid purple" : "",
+          }}
+        >
+          Zemin Parenkim
+        </button>
+
+        {drawingMode === "rectangle" && (
+          <div className="instruction">
+            Click and drag to draw | ESC to cancel
+          </div>
+        )}
+
+        {drawingMode === "circle" && !isPlacingCircle && (
+          <div className="instruction">
+            Click to start placing circle | ESC to cancel
+          </div>
+        )}
+
+        {isPlacingCircle && (
+          <div className="instruction">
+            Click to place circle | ESC to cancel
+          </div>
+        )}
+      </div>
         <div className="toolbar-section">
         <h3>File</h3>
         <input
@@ -136,96 +226,7 @@ const Toolbar = ({
         </button>
       </div>
 
-      <div className="toolbar-section">
-        <h3>Drawing</h3>
-        <button
-          onClick={() => setDrawingMode("circle")}
-          disabled={!imageUrl}
-          className={`toolbar-button ${
-            drawingMode === "circle" ? "active" : ""
-          }`}
-        >
-          Draw Circle
-        </button>
-        <button
-          onClick={() => setDrawingMode("rectangle")}
-          disabled={!imageUrl}
-          className={`toolbar-button ${
-            drawingMode === "rectangle" ? "active" : ""
-          }`}
-        >
-          Draw Rectangle
-        </button>
-        {/* Nodule Button (Red) */}
-        <button
-          onClick={() => {
-            setDrawingMode("polygon");
-            setDrawingType("nodule");
-          }}
-          disabled={!imageUrl}
-          className={`toolbar-button ${
-            drawingType === "nodule" ? "active" : ""
-          }`}
-          style={{
-            borderLeft: drawingType === "nodule" ? "3px solid red" : "",
-          }}
-        >
-          Add Nodule
-        </button>
-
-        {/* Strap Kasi Button (Blue) */}
-        <button
-          onClick={() => {
-            setDrawingMode("polygon");
-            setDrawingType("strap-kasi");
-          }}
-          disabled={!imageUrl}
-          className={`toolbar-button ${
-            drawingType === "strap-kasi" ? "active" : ""
-          }`}
-          style={{
-            borderLeft: drawingType === "strap-kasi" ? "3px solid blue" : "",
-          }}
-        >
-          Strap Kasi
-        </button>
-
-        {/* Zemin Parenkim Button (Purple) */}
-        <button
-          onClick={() => {
-            setDrawingMode("polygon");
-            setDrawingType("zemin-parenkim");
-          }}
-          disabled={!imageUrl}
-          className={`toolbar-button ${
-            drawingType === "zemin-parenkim" ? "active" : ""
-          }`}
-          style={{
-            borderLeft:
-              drawingType === "zemin-parenkim" ? "3px solid purple" : "",
-          }}
-        >
-          Zemin Parenkim
-        </button>
-
-        {drawingMode === "rectangle" && (
-          <div className="instruction">
-            Click and drag to draw | ESC to cancel
-          </div>
-        )}
-
-        {drawingMode === "circle" && !isPlacingCircle && (
-          <div className="instruction">
-            Click to start placing circle | ESC to cancel
-          </div>
-        )}
-
-        {isPlacingCircle && (
-          <div className="instruction">
-            Click to place circle | ESC to cancel
-          </div>
-        )}
-      </div>
+     
     </div>
   );
 };
