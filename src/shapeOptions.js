@@ -1,22 +1,42 @@
 // File: shapeOptions.js
+
+
+      
 export const shapeOptionsMap = {
-    composition: ['Solid', 'Predominantly Solid', 'Spongiform', 'Mixed cystic and solid', 'Cystic'],
-    echogenicity: ['Anechoic', 'Hyperechoic', 'Isoechoic', 'Hypoechoic', 'Very hypoechoic'],
-    shape: ['Wider-than-tall', 'Taller-than-wide'],
-    margin: ['Smooth', 'Irregular', 'Lobulated', 'Extrathyroidal extension'],
-    echogenicFoci: ['None', 'Macrocalcifications', 'Peripheral (rim) calcifications', 'Punctate echogenic foci'],
-    measured: ['Yes', 'No'],
-    needleInNodule: ['Yes', 'No'],
-    notSuitable: ['Yes', 'No'],
-    // For zemin-parenkim
-    heterojenite: ['Homojen', 'Heterojen']
-  };
-  
-  export const propertyFields = {
-    nodule: ['composition', 'echogenicity', 'shape', 'margin', 'echogenicFoci','measured','needleInNodule','notSuitable'],
-    'zemin-parenkim': ['heterojenite']
-  };
-    export const shapeOptions = {
+        composition: ['Solid', 'Predominantly Solid', 'Spongiform', 'Mixed cystic and solid', 'Cystic'],
+        echogenicity: ['Anechoic', 'Hyperechoic', 'Isoechoic', 'Hypoechoic', 'Very hypoechoic'],
+        shape: ['Wider-than-tall', 'Taller-than-wide'],
+        margin: ['Smooth', 'Irregular', 'Lobulated', 'Extrathyroidal extension'],
+        echogenicFoci: ['None', 'Macrocalcifications', 'Peripheral (rim) calcifications', 'Punctate echogenic foci'],
+        measured: ['Yes', 'No'],
+        needleInNodule: ['Yes', 'No'],
+        notSuitable: ['Yes', 'No'],
+        heterojenite: ['Homojen', 'Heterojen']
+};
+      
+      export const propertyFields = {
+        rateFileNodules: ['composition', 'echogenicity', 'shape', 'margin', 'echogenicFoci', 'measured', 'needleInNodule', 'notSuitable'],
+        'zemin-parenkim': ['heterojenite'],
+        'zeminParenkims': ['heterojenite'],
+        nodule: ['composition', 'echogenicity', 'shape', 'margin', 'echogenicFoci', 'measured', 'needleInNodule', 'notSuitable'],
+      };
+      
+      export const fieldLabels = {
+        composition: "Composition",
+        echogenicity: "Echogenicity",
+        shape: "Shape",
+        margin: "Margin",
+        echogenicFoci: "Echogenic Foci",
+        measured: "Measured",
+        needleInNodule: "Needle in Nodule",
+        notSuitable: "Not Suitable",
+        heterojenite: "Heterojenite",
+        tiradsCategory: "TIRADS Category",
+        tiradsScore: "TIRADS Score",
+        bethesda: "Bethesda",
+        subset: "Subset"
+      };
+      export const shapeOptions = {
         composition: {
         title: 'Composition',
         options: shapeOptionsMap.composition,
@@ -138,16 +158,3 @@ export const shapeOptionsMap = {
             'Punctate echogenic foci': '',
         },
     };
-   export  const fieldLabels = {
-        measured: "Measured",
-        needleInNodule: "Needle in Nodule",
-        notSuitable: "Not Suitable",
-        composition: "Composition",
-        echogenicity: "Echogenicity",
-        shape: "Shape",
-        margin: "Margin",
-        echogenicFoci: "Echogenic Foci",
-        heterojenite: "Heterojenite",
-        shapeProperties: "Shape Properties",
-      };
-      
