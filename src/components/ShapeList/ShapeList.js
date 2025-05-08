@@ -1,8 +1,17 @@
 import { List, Collapse } from "antd";
 import "./ShapeList.css";
 import { getLabel } from "../../utils/getLabel";
+import { categories } from "../../shapeOptions"; 
 const ShapeList = ({ shapes, selectedShape, onClick }) => {
   const { Panel } = Collapse;
+  const targetTypes = [
+    'rateFileNodules',
+    'strapKasis',
+    'zeminParenkims',
+    'punctateEchogenicFocis',
+    'macroCalcifications',
+    'peripheralRimCalcifications'
+  ];
   return (
     <div>
      
@@ -10,8 +19,9 @@ const ShapeList = ({ shapes, selectedShape, onClick }) => {
       <Collapse accordion>
         {shapes.map((item, index) => {
           console.log("item", item);
-          const meta =
-            item.object.properties.properties  || item.properties || {};
+          const meta = targetTypes.includes(item.type) 
+          ? item.object?.properties?.properties || {} 
+          : item?.properties || {};
           console.log("meta", meta);
           return (
             <Panel
