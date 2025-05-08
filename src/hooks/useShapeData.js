@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 // Sample data (this would be imported or fetched in a real scenario)
 import exampleData from '../exampleData.json';
 
+import { getTypeColor } from '../utils/helpers';
+
 const categories = [
   "rateFileNodules",
   "strapKasis",
@@ -10,7 +12,7 @@ const categories = [
   "punctateEchogenicFocis",
   "macroCalcifications",
   "peripheralRimCalcifications"
-];
+]; // Adjust the import path as necessary
 
 const useShapeData = () => {
   const [shapeData, setShapeData] = useState([]);
@@ -27,9 +29,9 @@ const useShapeData = () => {
               extractedShapeData.push({
                 category,
                 points,
-                color: "red", // You can change this dynamically or based on conditions
+                color: getTypeColor(`${category}`), // You can change this dynamically or based on conditions
                 type: `${category}`,
-                metadata: {
+                properties: {
                   ...item,
                   
                 },

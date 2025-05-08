@@ -13,7 +13,7 @@ import { CaretRightOutlined } from "@ant-design/icons";
 import "./ShapeInventory.css";
 import ShapeList from "../ShapeList/ShapeList"; // Ensure this path is correct based on your project structure
 import ShapeOptionsPanel from "../ShapeOptionsPanel/ShapeOptionsPanel"; // update the path based on your file structure
-
+import { getTypeColor } from "../../utils/helpers"; // Ensure this path is correct based on your project structure
 import { shapeOptionsMap ,propertyFields,fieldLabels} from "../../shapeOptions"; // Ensure this path is correct based on your project structure
 const { Panel } = Collapse;
 
@@ -25,6 +25,11 @@ const ShapeInventory = ({ canvas }) => {
     "nodules",
     "strapKasi",
     "zeminParenkim",
+    "rect",
+    "punctateEchogenicFocis",
+    "macroCalcifications",
+    "peripheralRimCalcifications",
+
   ]);
 
   const [form] = Form.useForm();
@@ -36,6 +41,9 @@ const ShapeInventory = ({ canvas }) => {
         nodules: [],
         strapKasi: [],
         zeminParenkim: [],
+        punctateEchogenicFocis: [],
+        macroCalcifications: [],
+        peripheralRimCalcifications: [],
         rectangles: [],
       };
 
@@ -43,7 +51,10 @@ const ShapeInventory = ({ canvas }) => {
       nodules: [],
       strapKasi: [],
       zeminParenkim: [],
+      punctateEchogenicFocis: [],
       rectangles: [],
+        macroCalcifications: [],
+        peripheralRimCalcifications: [],
     };
 
     canvas.getObjects().forEach((obj, index) => {
@@ -54,15 +65,26 @@ const ShapeInventory = ({ canvas }) => {
         properties: obj.properties || {},
       };
 
-      if (obj.dataType === "nodule") {
+      if (obj.dataType === "nodule" || obj.type === "rateFileNodules") {
         shapes.nodules.push(shapeItem);
-      } else if (obj.dataType === "strap-kasi") {
+      } else if (obj.dataType === "strap-kasi" || obj.type === "strapKasis") {
         shapes.strapKasi.push(shapeItem);
-      } else if (obj.dataType === "zemin-parenkim") {
+      } else if (obj.dataType === "zemin-parenkim" || obj.type === "zeminParenkims") {
         shapes.zeminParenkim.push(shapeItem);
       } else if (obj.type === "rect") {
         shapes.rectangles.push(shapeItem);
+      } else if (obj.type === "punctateEchogenicFocis") {
+        shapes.punctateEchogenicFocis.push(shapeItem);
+      } else if (obj.type === "macroCalcifications") {
+        shapes.macroCalcifications.push(shapeItem);
       }
+      else if (obj.type === "peripheralRimCalcifications") {
+        shapes.peripheralRimCalcifications.push(shapeItem);
+      }
+      else {
+        shapes.rectangles.push(shapeItem);
+      }
+    
     });
 
     return shapes;
@@ -87,8 +109,20 @@ const ShapeInventory = ({ canvas }) => {
       case "strap-kasi":
         setActivePanel(["strapKasi"]);
         break;
-      case "zemin-parenkim":
+        case "zemin-parenkim":
         setActivePanel(["zeminParenkim"]);
+        break;
+        case "rect":
+        setActivePanel(["rect"]);
+        break;
+        case "punctateEchogenicFocis":
+        setActivePanel(["punctateEchogenicFocis"]);
+        break;
+        case "macroCalcifications":
+        setActivePanel(["macroCalcifications"]);
+        break;
+        case "peripheralRimCalcifications":
+        setActivePanel(["peripheralRimCalcifications"]);
         break;
       default:
         setActivePanel([]);
@@ -112,20 +146,7 @@ const ShapeInventory = ({ canvas }) => {
 
   const shapes = getShapeDetails();
 
-  const getTypeColor = (type) => {
-    switch (type) {
-      case "nodule":
-        return "red";
-      case "strap-kasi":
-        return "blue";
-      case "zemin-parenkim":
-        return "purple";
-      case "rect":
-        return "green";
-      default:
-        return "gray";
-    }
-  };
+
 
   const renderPropertyEditor = () => {
     if (!selectedShape) return null;
@@ -224,6 +245,78 @@ const ShapeInventory = ({ canvas }) => {
               onClick={handleShapeClick}
             />
           </Panel>
+            <Panel
+                header={
+                <span>
+                    Rectangles{" "}
+                    <Badge
+                    count={shapes.rectangles.length}
+                    style={{ backgroundColor: getTypeColor("rect") }}
+                    />
+                </span>
+                }
+                key="rect"  
+            >
+                <ShapeList
+                shapes={shapes.rectangles}
+                selectedShape={selectedShape}
+                onClick={handleShapeClick}
+                />
+            </Panel>
+            <Panel
+                header={
+                <span>
+                    Punctate Echogenic Foci{" "}
+                    <Badge
+                    count={shapes.punctateEchogenicFocis.length}
+                    style={{ backgroundColor: getTypeColor("punctateEchogenicFocis") }}
+                    />
+                </span>
+                }
+                key="punctateEchogenicFocis"
+            >
+                <ShapeList
+                shapes={shapes.punctateEchogenicFocis}
+                selectedShape={selectedShape}
+                onClick={handleShapeClick}
+                />
+            </Panel>    
+            <Panel
+                header={
+                <span>
+                    Macrocalcifications{" "}
+                    <Badge
+                    count={shapes.macroCalcifications.length}
+                    style={{ backgroundColor: getTypeColor("macroCalcifications") }}
+                    />
+                </span>
+                }
+                key="macroCalcifications"
+            >   
+                <ShapeList
+                shapes={shapes.macroCalcifications}
+                selectedShape={selectedShape}
+                onClick={handleShapeClick}
+                />
+            </Panel>
+            <Panel
+                header={
+                <span>
+                    Peripheral Rim Calcifications{" "}
+                    <Badge
+                    count={shapes.peripheralRimCalcifications.length}
+                    style={{ backgroundColor: getTypeColor("peripheralRimCalcifications") }}
+                    />
+                </span>
+                }
+                key="peripheralRimCalcifications"
+            >
+                <ShapeList
+                shapes={shapes.peripheralRimCalcifications}
+                selectedShape={selectedShape}
+                onClick={handleShapeClick}
+                />
+            </Panel>
         </Collapse>
       </Card>
 

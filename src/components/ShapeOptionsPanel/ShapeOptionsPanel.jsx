@@ -9,7 +9,7 @@ const ShapeOptionsPanel = ({ fields, form, shapeOptionsMap, fieldLabels,onSave }
   
     return (
       <Form form={form} layout="vertical" onFinish={onSave}>
-        {fields.map((field) => (
+        {fields?.map((field) => (
           <Form.Item
             key={field}
             name={field}
@@ -31,11 +31,13 @@ const ShapeOptionsPanel = ({ fields, form, shapeOptionsMap, fieldLabels,onSave }
             )}
           </Form.Item>
         ))}
-        <Form.Item>
+        {fields && <Form.Item>
           <Button type="primary" htmlType="submit">
             Save
           </Button>
-        </Form.Item>
+        </Form.Item>}
+        {!fields && <p style={{ color: "#999" }}>No associated properties</p>}
+        
       </Form>
     );
 };

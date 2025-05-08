@@ -114,9 +114,8 @@ const FabricDrawing = () => {
           stroke: 'black',
           strokeWidth: 2,
           selectable: true,
-
-          
-          metadata: {
+          type: category,
+          properties: {
             type: category,
             ...item,
           },
