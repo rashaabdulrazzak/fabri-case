@@ -16,6 +16,7 @@ const categories = [
 
 const useShapeData = () => {
   const [shapeData, setShapeData] = useState([]);
+
   useEffect(() => {
     const extractedShapeData = [];
 

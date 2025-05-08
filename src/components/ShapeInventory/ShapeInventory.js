@@ -58,27 +58,30 @@ const ShapeInventory = ({ canvas }) => {
     };
 
     canvas.getObjects().forEach((obj, index) => {
+       
+       
       const shapeItem = {
         id: `${obj.type}-${index}`,
         type: obj.dataType || obj.type,
         object: obj,
         properties: obj.properties || {},
+        
       };
-
-      if (obj.dataType === "nodule" || obj.type === "rateFileNodules") {
+console.log("shapeItem", shapeItem);
+      if (obj.dataType === "nodule"  || obj.dataType === "rateFileNodules") {
         shapes.nodules.push(shapeItem);
-      } else if (obj.dataType === "strap-kasi" || obj.type === "strapKasis") {
+      } else if (obj.dataType === "strap-kasi" || obj.dataType === "strapKasis") {
         shapes.strapKasi.push(shapeItem);
-      } else if (obj.dataType === "zemin-parenkim" || obj.type === "zeminParenkims") {
+      } else if (obj.dataType === "zemin-parenkim" || obj.dataType === "zeminParenkims") {
         shapes.zeminParenkim.push(shapeItem);
-      } else if (obj.type === "rect") {
+      } else if (obj.dataType === "rect") {
         shapes.rectangles.push(shapeItem);
-      } else if (obj.type === "punctateEchogenicFocis") {
+      } else if (obj.dataType === "punctateEchogenicFocis") {
         shapes.punctateEchogenicFocis.push(shapeItem);
-      } else if (obj.type === "macroCalcifications") {
+      } else if (obj.dataType === "macroCalcifications") {
         shapes.macroCalcifications.push(shapeItem);
       }
-      else if (obj.type === "peripheralRimCalcifications") {
+      else if (obj.dataType === "peripheralRimCalcifications") {
         shapes.peripheralRimCalcifications.push(shapeItem);
       }
       else {

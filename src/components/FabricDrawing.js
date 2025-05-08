@@ -114,7 +114,8 @@ const FabricDrawing = () => {
           stroke: 'black',
           strokeWidth: 2,
           selectable: true,
-          type: category,
+          type: "polygon",
+          dataType: category,
           properties: {
             type: category,
             ...item,
