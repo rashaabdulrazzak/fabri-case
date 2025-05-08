@@ -311,20 +311,6 @@ const savePolygonData = (polygon) => {
       }
     }
   
-    const isFirstPoint = polygonPoints.length === 0;
-  
-    const circle = new fabric.Circle({
-      left: x,
-      top: y,
-      radius: isFirstPoint ? 7 : 5,
-      fill: isFirstPoint ? 'green' : 'red',
-      selectable: false,
-      originX: 'center',
-      originY: 'center',
-    });
-  
-    canvas.add(circle);
-  
     if (polygonPoints.length > 0) {
       const prevPoint = polygonPoints[polygonPoints.length - 1];
       const line = new fabric.Line([prevPoint.x, prevPoint.y, x, y], {
