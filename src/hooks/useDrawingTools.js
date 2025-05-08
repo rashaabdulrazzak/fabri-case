@@ -135,6 +135,130 @@ export const useDrawingTools = (canvas) => {
     return rect;
   }, [canvas]);
  
+  function enablePolygonEditing(polygon, canvas) {
+    polygon.edit = true;
+  
+    polygon.objectCaching = false;
+    polygon.hasBorders = false;
+    polygon.cornerStyle = 'circle';
+  
+    polygon.controls = polygon.points.reduce((acc, point, index) => {
+      acc[`p${index}`] = new fabric.Control({
+        positionHandler: function(dim, finalMatrix, fabricObject) {
+          const x = fabricObject.points[index].x - fabricObject.pathOffset.x;
+          const y = fabricObject.points[index].y - fabricObject.pathOffset.y;
+          return fabric.util.transformPoint(
+            { x, y },
+            fabric.util.multiplyTransformMatrices(
+              fabricObject.canvas.viewportTransform,
+              fabricObject.calcTransformMatrix()
+            )
+          );
+        },
+        actionHandler: function(eventData, transform, x, y) {
+          const polygon = transform.target;
+          const currentControl = polygon.controls[`p${index}`];
+          const mouseLocal = polygon.toLocalPoint(
+            new fabric.Point(x, y),
+            'center',
+            'center'
+          );
+          polygon.points[index].x = mouseLocal.x + polygon.pathOffset.x;
+          polygon.points[index].y = mouseLocal.y + polygon.pathOffset.y;
+          return true;
+        },
+        actionName: 'modifyPolygon',
+        pointIndex: index,
+        cursorStyle: 'pointer'
+      });
+      return acc;
+    }, {});
+  
+    polygon.setCoords();
+    canvas.requestRenderAll();
+  }
+  // Utility to extract polygon data
+const savePolygonData = (polygon) => {
+    const updatedPoints = polygon.points.map(p => ({ x: p.x, y: p.y }));
+    console.log('Auto-saving polygon data:', updatedPoints);
+  
+    // You can send this to a server or store it in state
+  };
+    // Make the polygon editable
+    useEffect(() => {
+        if (!canvas) return;
+        canvas.on('object:added', (e) => {
+          const obj = e.target;
+          if (obj.type === 'polygon') {
+            enablePolygonEditing(obj, canvas);
+          }
+        }
+        );
+        canvas.on('object:modified', (e) => {
+          const obj = e.target;
+          if (obj.type === 'polygon') {
+            enablePolygonEditing(obj, canvas);
+          }
+        }
+        );
+
+        return () => {
+          canvas.off('object:added');
+          canvas.off('object:modified');
+        }
+      }
+      , [canvas]);
+  // Complete the polygon drawing  
+
+  
+  function disablePolygonEditing(polygon, canvas) {
+    polygon.edit = false;
+    polygon.controls = fabric.Object.prototype.controls;
+    canvas.requestRenderAll();
+  }
+  
+
+  
+  // Make the polygon editable
+  useEffect(() => {
+    if (!canvas) return;
+  
+    // When a polygon is added or modified, enable editing
+    const handleAddOrModify = (e) => {
+      const obj = e.target;
+      if (obj.type === 'polygon') {
+        enablePolygonEditing(obj, canvas);
+      }
+    };
+  
+    // Auto-save when a polygon is modified
+    const handleModified = (e) => {
+      const obj = e.target;
+      if (obj.type === 'polygon') {
+        savePolygonData(obj);
+      }
+    };
+  
+    // Auto-save on deselect (blur)
+    const handleDeselection = () => {
+      canvas.getObjects().forEach(obj => {
+        if (obj.type === 'polygon' && obj.edit) {
+          savePolygonData(obj);
+        }
+      });
+    };
+  
+    canvas.on('object:added', handleAddOrModify);
+    canvas.on('object:modified', handleModified);
+    canvas.on('selection:cleared', handleDeselection);
+  
+    return () => {
+      canvas.off('object:added', handleAddOrModify);
+      canvas.off('object:modified', handleModified);
+      canvas.off('selection:cleared', handleDeselection);
+    };
+  }, [canvas]);
+  
   const completePolygon = useCallback(() => {
     if (!canvas || polygonPoints.length < 3 || !drawingType) {
       alert('A shape needs at least 3 points');
@@ -152,35 +276,15 @@ export const useDrawingTools = (canvas) => {
       properties: {},
     });
   
-    // Create a visible "first point" marker
-    const firstPoint = polygonPoints[0];
-    const startCircle = new fabric.Circle({
-      left: firstPoint.x,
-      top: firstPoint.y,
-      radius: 5,
-      fill: 'green',
-      originX: 'center',
-      originY: 'center',
-      selectable: false,
-      evented: false,
-    });
-  
-    // Group the polygon and circle together
-    const group = new fabric.Group([polygon, startCircle], {
-      selectable: true,
-      hasControls: false,
-      dataType: drawingType,
-      properties: {},
-    });
-  
-    canvas.add(group);
-  
-    // Remove temporary lines and small points
+    // Remove temporary lines and points
     canvas.getObjects().forEach((obj) => {
       if (obj.type === 'line' || (obj.type === 'circle' && obj.radius === 5)) {
         canvas.remove(obj);
       }
     });
+  
+    canvas.add(polygon);
+    enablePolygonEditing(polygon, canvas);
   
     setPolygonPoints([]);
     setDrawingType(null);
@@ -188,7 +292,11 @@ export const useDrawingTools = (canvas) => {
     canvas.renderAll();
   }, [canvas, polygonPoints, drawingType]);
   
-  
+  function disablePolygonEditing(polygon, canvas) {
+    polygon.edit = false;
+    polygon.controls = fabric.Object.prototype.controls;
+    canvas.requestRenderAll();
+  }
   
   const handlePolygonClick = useCallback((x, y) => {
     const newPoint = { x, y };
@@ -229,7 +337,6 @@ export const useDrawingTools = (canvas) => {
     setPolygonPoints(prev => [...prev, newPoint]);
   }, [canvas, polygonPoints, completePolygon]);
   
-
   const handleMouseMove = useCallback((e) => {
     if (!canvas || !isDrawingRect || !rectStartPoint || !currentRect) return;
 
