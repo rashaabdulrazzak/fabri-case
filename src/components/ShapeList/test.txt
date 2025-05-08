@@ -1,0 +1,56 @@
+import React from "react";
+import { Collapse } from "antd";
+
+const { Panel } = Collapse;
+
+const ShapeList = ({ shapes, selectedShape, onClick }) => {
+  return (
+    <Collapse accordion>
+      {shapes.map((item, index) => {
+        console.log("item", item);
+        const meta =
+        item.object?.metadata?.metadata ||
+        item.properties?.metadata ||
+        {};
+        console.log("meta", meta);
+        return (
+          <Panel
+            header={
+              <span
+            className={`inventory-item ${
+              selectedShape?.id === item.id ? "selected" : ""
+            }`}
+            onClick={(e) => {
+              e.stopPropagation();
+              onClick(item);
+            }}
+              >
+            {item.type} {index + 1}
+              </span>
+            }
+            key={item.id}
+          >
+            {Object.keys(meta).length === 0 ? (
+              <p style={{ color: "#999" }}>No metadata</p>
+            ) : (
+              <ul>
+            {Object.entries(meta)
+              .filter(([key]) => key !== "noduleMask")
+              .map(([key, value]) => (
+                <li key={key}>
+                  <strong>{key}:</strong> {String(value)}
+                </li>
+              ))}
+              </ul>
+            )}
+          </Panel>
+        );
+      })}
+    </Collapse>
+  );
+};
+
+export default ShapeList;
+
+normal nodule access 
+item.properties 

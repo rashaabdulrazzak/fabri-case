@@ -3,10 +3,13 @@ import { useDrawingTools } from '../hooks/useDrawingTools';
 import { useCanvasActions } from "../hooks/useCanvasActions";
 import { useFabricCanvas } from '../hooks/useFabricCanvas';
 import { useCanvasState } from '../hooks/useCanvasState';
+import useShapeData from '../hooks/useShapeData';
 import ShapeInventory from './ShapeInventory/ShapeInventory';
+import { fabric } from 'fabric';
 
 import Toolbar from './Toolbar/Toolbar';
 import './FabricDrawing.css';
+
 
 const FabricDrawing = () => {
   const canvasRef = useRef(null);
@@ -55,6 +58,79 @@ const FabricDrawing = () => {
 
   // Function to force inventory update
   const updateInventory = () => setInventoryVersion(v => v + 1);
+  const shapeCategories = React.useMemo(() => [
+    'rateFileNodules',
+    'strapKasis',
+    'zeminParenkims',
+    'punctateEchogenicFocis',
+    'macroCalcifications',
+    'peripheralRimCalcifications'
+  ], []);
+  const shapeData = useShapeData();
+  
+  const drawShapesFromData = React.useCallback((canvas, shapeData) => {
+    if (!canvas || !shapeData) return;
+  
+    // Step 1: Group the array by category
+    const groupedData = shapeData.reduce((acc, item) => {
+      if (!acc[item.category]) acc[item.category] = [];
+      acc[item.category].push(item);
+      return acc;
+    }, {});
+  
+    // Step 2: Iterate through shapeCategories
+    shapeCategories.forEach(category => {
+      const items = groupedData[category];
+      if (!items) {
+        console.warn(`Category ${category} not found in data.`);
+        return;
+      }
+  
+      items.forEach(item => {
+        let points = [];
+        try {
+          points = Array.isArray(item.points)
+            ? item.points.map(([x, y]) => ({ x, y }))
+            : JSON.parse(item.points).map(([x, y]) => ({ x, y }));
+          points = points.map(point => new fabric.Point(point.x, point.y));
+        } catch (err) {
+          console.error('Invalid points data:', item.points);
+          return;
+        }
+        if (points.length < 3) {
+          console.warn(`Not enough points to create polygon for ${category}`);
+          return;
+        }
+        // Create a polygon using the points
+        // Check if points are valid
+        if (points.some(point => point.x === undefined || point.y === undefined)) {
+          console.error('Invalid points data:', points);
+          return;
+        }
+       
+        // Create a polygon using the points
+        const polygon = new fabric.Polygon(points, {
+          fill:   'transparent',
+          stroke: 'black',
+          strokeWidth: 2,
+          selectable: true,
+
+          
+          metadata: {
+            type: category,
+            ...item,
+          },
+        });
+  
+        canvas.add(polygon);
+      });
+    });
+    updateInventory();
+
+    canvas.renderAll();
+  }, [shapeCategories]);
+  
+  
 
   // Update inventory when canvas changes
   useEffect(() => {
@@ -73,7 +149,12 @@ const FabricDrawing = () => {
     };
   }, [canvas]);
 
-
+  useEffect(() => {
+    if (canvas && shapeData) {
+     
+      drawShapesFromData(canvas, shapeData);
+    }
+  }, [canvas, drawShapesFromData, shapeData]);
   // Handle image upload
   const handleImageUpload = (e) => {
     const file = e.target.files[0];

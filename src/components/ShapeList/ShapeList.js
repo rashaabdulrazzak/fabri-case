@@ -1,49 +1,52 @@
-import {
-  List
-} from "antd";
-import './ShapeList.css';
-const ShapeList = ({ shapes, selectedShape, onClick }) => (
-  <List
-    dataSource={shapes}
-    renderItem={(item, index) => (
-      <List.Item
-        className={`inventory-item ${
-          selectedShape?.id === item.id ? "selected" : ""
-        }`}
-        onClick={() => onClick(item)}
-      >
-        <div>
-          <span className="shape-label">
-            {item.type.charAt(0).toUpperCase() + item.type.slice(1)} {index + 1}
-          </span>
-          {selectedShape?.id === item.id && selectedShape?.properties && (
-            <div className="shape-details">
-              {Object.entries(selectedShape.properties).map(([key, value]) => (
-                <div key={key} className="property-row">
-                  <span className="property-key">
-                    {key === "heterojenitesi"
-                      ? "Heterojenite"
-                      : key.charAt(0).toUpperCase() + key.slice(1)}
-                    :
-                  </span>
-                  <span
-  className={`property-value ${
-    typeof value === 'boolean'
-      ? value
-        ? 'boolean-true'
-        : 'boolean-false'
-      : ''
-  }`}
->
-  {typeof value === 'boolean' ? (value ? '✅ Yes' : '❌ No') : value}
-</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </List.Item>
-    )}
-  />
-);
+import { List, Collapse } from "antd";
+import "./ShapeList.css";
+const ShapeList = ({ shapes, selectedShape, onClick }) => {
+  const { Panel } = Collapse;
+  return (
+    <div>
+     
+      
+      <Collapse accordion>
+        {shapes.map((item, index) => {
+          console.log("item", item);
+          const meta =
+            item.object?.metadata?.metadata || item.properties || {};
+          console.log("meta", meta);
+          return (
+            <Panel
+              header={
+                <span
+                  className={`inventory-item ${
+                    selectedShape?.id === item.id ? "selected" : ""
+                  }`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onClick(item);
+                  }}
+                >
+                  {item.type} {index + 1}
+                </span>
+              }
+              key={item.id}
+            >
+              {Object.keys(meta).length === 0 ? (
+                <p style={{ color: "#999" }}>No metadata</p>
+              ) : (
+                <ul>
+                  {Object.entries(meta)
+                    .filter(([key]) => key !== "noduleMask")
+                    .map(([key, value]) => (
+                      <li key={key}>
+                        <strong>{key}:</strong> {String(value)}
+                      </li>
+                    ))}
+                </ul>
+              )}
+            </Panel>
+          );
+        })}
+      </Collapse>
+    </div>
+  );
+};
 export default ShapeList;

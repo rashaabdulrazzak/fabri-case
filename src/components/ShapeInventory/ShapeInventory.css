@@ -115,3 +115,25 @@
     margin: 8px 0;
     font-size: 12px;
   }
+
+  .inventory-container {
+    padding: 16px;
+    max-width: 400px;
+  }
+  
+  .shape-inventory {
+    margin-bottom: 20px;
+  }
+  
+  .inventory-item {
+    cursor: pointer;
+  }
+  
+  .inventory-item.selected {
+    background-color: #e6f7ff;
+  }
+  
+  .property-editor-card {
+    margin-top: 16px;
+  }
+  

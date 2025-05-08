@@ -14,7 +14,6 @@ const categories = [
 
 const useShapeData = () => {
   const [shapeData, setShapeData] = useState([]);
-console.log("useShapeData", shapeData);
   useEffect(() => {
     const extractedShapeData = [];
 
@@ -30,6 +29,10 @@ console.log("useShapeData", shapeData);
                 points,
                 color: "red", // You can change this dynamically or based on conditions
                 type: `${category}`,
+                metadata: {
+                  ...item,
+                  
+                },
                 id: `${category}_${index}`
               });
             } catch (e) {
