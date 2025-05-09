@@ -14,6 +14,7 @@ import "./ShapeInventory.css";
 import ShapeList from "../ShapeList/ShapeList"; // Ensure this path is correct based on your project structure
 import ShapeOptionsPanel from "../ShapeOptionsPanel/ShapeOptionsPanel"; // update the path based on your file structure
 import { getTypeColor } from "../../utils/helpers"; // Ensure this path is correct based on your project structure
+import { prepareFormData,updateShapeProperties } from "../../utils/getLabel"; // Ensure this path is correct based on your project structure
 import { shapeOptionsMap ,propertyFields,fieldLabels} from "../../shapeOptions"; // Ensure this path is correct based on your project structure
 const { Panel } = Collapse;
 
@@ -31,7 +32,21 @@ const ShapeInventory = ({ canvas }) => {
     "peripheralRimCalcifications",
 
   ]);
+  const targetTypes = [
+    'nodule',
+    'strap-kasi',
+    'zemin-parenkim'
+  ];
+const categories
+= [
+  "rateFileNodules",
+  "strapKasis",
+  "zeminParenkims",     
+    "punctateEchogenicFocis",
+    "macroCalcifications",
+    "peripheralRimCalcifications"
 
+]; // Adjust the import path as necessary
   const [form] = Form.useForm();
 
   
@@ -67,7 +82,7 @@ const ShapeInventory = ({ canvas }) => {
         properties: obj.properties || {},
         
       };
-console.log("shapeItem", shapeItem);
+
       if (obj.dataType === "nodule"  || obj.dataType === "rateFileNodules") {
         shapes.nodules.push(shapeItem);
       } else if (obj.dataType === "strap-kasi" || obj.dataType === "strapKasis") {
@@ -102,11 +117,18 @@ console.log("shapeItem", shapeItem);
 
     setSelectedShape(shape);
     setShapeProperties(shape.properties || {});
-
+   
+    // Set the form values based on the selected shape
+    
     // Initialize form with existing properties
-    form.setFieldsValue(shape.properties || {});
+    const fieldProps = prepareFormData(shape);
+
+    form.setFieldsValue(fieldProps || {});
+    // Set the active panel based on the shape type
+ 
     switch (shape.type) {
       case "nodule":
+        case "rateFileNodules":  
         setActivePanel(["nodules"]);
         break;
       case "strap-kasi":
@@ -136,7 +158,12 @@ console.log("shapeItem", shapeItem);
     if (!selectedShape || !canvas) return;
 
     const values = form.getFieldsValue();
-    selectedShape.object.set("properties", values);
+    
+    const selectedShapeUpdated = updateShapeProperties(selectedShape, values);
+    setSelectedShape(selectedShapeUpdated);
+   
+    // Update the shape properties
+
     setShapeProperties(values);
 
     // Update the shape in canvas

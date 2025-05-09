@@ -4,8 +4,7 @@ const { Option } = Select;
 
 const ShapeOptionsPanel = ({ fields, form, shapeOptionsMap, fieldLabels,onSave }) => {
     const checkboxFields = ["measured", "needleInNodule", "notSuitable"];
-
-    
+   
   
     return (
       <Form form={form} layout="vertical" onFinish={onSave}>

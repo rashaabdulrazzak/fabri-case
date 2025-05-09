@@ -5,12 +5,9 @@ import { categories } from "../../shapeOptions";
 const ShapeList = ({ shapes, selectedShape, onClick }) => {
   const { Panel } = Collapse;
   const targetTypes = [
-    'rateFileNodules',
-    'strapKasis',
-    'zeminParenkims',
-    'punctateEchogenicFocis',
-    'macroCalcifications',
-    'peripheralRimCalcifications'
+    'nodule',
+    'strap-kasi',
+    'zemin-parenkim'
   ];
   return (
     <div>
@@ -18,11 +15,10 @@ const ShapeList = ({ shapes, selectedShape, onClick }) => {
       
       <Collapse accordion>
         {shapes.map((item, index) => {
-          console.log("item", item);
           const meta = targetTypes.includes(item.type) 
-          ? item.object?.properties?.properties || {} 
-          : item?.properties || {};
-          console.log("meta", meta);
+          ?  item?.properties || {} 
+          :  item.object?.properties?.properties || {};
+          
           return (
             <Panel
               header={
