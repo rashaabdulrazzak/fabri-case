@@ -79,17 +79,16 @@ function processFieldValue(shape, field, value) {
     }
 
     export function updateShapeProperties(selectedShape, values) {
+       
         // Make sure properties exist
         if (!selectedShape.properties) {
-          selectedShape.properties = {};
+           selectedShape.properties = {};
         }
       
         if (targetTypes.includes(selectedShape.type)) {
           // For targetTypes - update direct properties
-          selectedShape.properties = {
-            ...selectedShape.properties,
-            ...values
-          };
+          selectedShape.object.set("properties", values);
+          selectedShape.properties.properties = values;
         } else {
           // For categories - ensure nested properties exists
           if (!selectedShape.properties.properties) {

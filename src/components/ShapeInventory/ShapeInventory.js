@@ -14,7 +14,7 @@ import "./ShapeInventory.css";
 import ShapeList from "../ShapeList/ShapeList"; // Ensure this path is correct based on your project structure
 import ShapeOptionsPanel from "../ShapeOptionsPanel/ShapeOptionsPanel"; // update the path based on your file structure
 import { getTypeColor } from "../../utils/helpers"; // Ensure this path is correct based on your project structure
-import { prepareFormData,updateShapeProperties } from "../../utils/getLabel"; // Ensure this path is correct based on your project structure
+import { prepareFormData, updateShapeProperties} from "../../utils/getLabel"; // Ensure this path is correct based on your project structure
 import { shapeOptionsMap ,propertyFields,fieldLabels} from "../../shapeOptions"; // Ensure this path is correct based on your project structure
 const { Panel } = Collapse;
 
@@ -158,14 +158,11 @@ const categories
     if (!selectedShape || !canvas) return;
 
     const values = form.getFieldsValue();
-    
-    const selectedShapeUpdated = updateShapeProperties(selectedShape, values);
-    setSelectedShape(selectedShapeUpdated);
-   
-    // Update the shape properties
+ 
+    const updatedShape = updateShapeProperties(selectedShape, values);
 
+    setSelectedShape( updatedShape);
     setShapeProperties(values);
-
     // Update the shape in canvas
     canvas.renderAll();
     message.success("Properties saved successfully");
