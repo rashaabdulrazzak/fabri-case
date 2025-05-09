@@ -29,11 +29,11 @@ const categories = [
 
 export function getLabel(propertyName, numericValue) {
   const map = propertyValueMaps[propertyName];
-  return map?.[numericValue] ?? `Unknown (${numericValue})`;
+  return map?.[numericValue] ?? numericValue;
 }
 export function getLabelFromMap(propertyName, numericValue) {
-  const map = propertyValueMaps[propertyName];
-  return map?.[numericValue] ?? `Unknown (${numericValue})`;
+    const map = propertyValueMaps[propertyName];
+    return map?.[numericValue] ?? numericValue;
 }
 export const reverseLabelMap = Object.entries(shapeOptionsMap).reduce(
   (acc, [field, options]) => {
