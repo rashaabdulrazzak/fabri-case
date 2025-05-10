@@ -3,8 +3,7 @@ import "./ShapeList.css";
 import { getLabel } from "../../utils/getLabel";
 import { categories } from "../../shapeOptions"; 
 const ShapeList = ({ shapes, selectedShape, onClick }) => {
-  console.log('shapes', shapes);
-  console.log('selectedShape', selectedShape);
+
   const { Panel } = Collapse;
   const targetTypes = [
     'nodule',
@@ -17,7 +16,7 @@ const ShapeList = ({ shapes, selectedShape, onClick }) => {
       
       <Collapse accordion>
         {shapes.map((item, index) => {
-          console.log('item', item);
+          
           const meta = targetTypes.includes(item.type) 
           ?  item?.properties || {} 
           :  item.object?.properties?.properties || {};

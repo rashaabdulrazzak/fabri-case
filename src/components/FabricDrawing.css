@@ -1,18 +1,62 @@
 .fabric-drawing-container {
     display: flex;
-  height: 100vh;
+    height: 100vh;
   }
+  
   .main-content {
     display: flex;
     flex-direction: column;
     flex-grow: 1;
   }
   
-  .canvas-container {
-    flex-grow: 1;
-    padding: 20px;
-    overflow: auto;
+  .canvas-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   }
+  
+  .canvas-toggle {
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .canvas-container {
+    position: relative;
+    width: 800px;
+    height: 600px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .canvas-container .canvas-wrapper {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  
+  .lock-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 800px;
+    height: 600px;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    z-index: 10;
+  }
+  
+  .lock-overlay.hidden {
+    display: none;
+  }
+  
   .toolbar {
     display: flex;
     flex-direction: column;
@@ -21,9 +65,9 @@
     padding: 15px;
     background: #f5f5f5;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   }
-
+  
   .toolbar-section {
     display: flex;
     flex-direction: column;
@@ -36,6 +80,21 @@
     border-bottom: 1px solid #ddd;
     font-size: 14px;
     color: #555;
+  }
+  
+  .toolbar-section.save-load {
+    border-top: 1px solid #eee;
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+  
+  .save-load-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .save-load-buttons button {
+    flex: 1;
   }
   
   .toolbar-button {
@@ -62,70 +121,19 @@
     border-color: #a0a0ff;
   }
   
-  .polygon-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px dashed #ddd;
-  }
-  
-  .instruction {
-    font-size: 12px;
-    color: #666;
-    font-style: italic;
-  }
-  
-  
-  
-  canvas {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  }
-  /* Add to FabricDrawing.css 
-  .canvas-container {
-    flex-grow: 1;
-  }
-.canvas-container {
-    position: relative;
-  }*/
-  
-  /* Style for the rectangle when selected */
-  .canvas-container .canvas-wrapper {
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    overflow: hidden;
-  }
-
-  
-  .polygon-controls {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 8px;
-    padding-top: 8px;
-    border-top: 1px dashed #ddd;
-  }
-  /* Add specific styles for different drawing modes */
-.instruction {
-    font-size: 12px;
-    color: #666;
-    font-style: italic;
-    margin-top: 5px;
-    padding: 5px;
-    background: #f8f8f8;
-    border-radius: 4px;
-    border-left: 3px solid #ddd;
-  }
-  
+  /* Drawing state */
   .drawing-active .toolbar-button:not(.active) {
     opacity: 0.6;
     pointer-events: none;
   }
-  /* Add specific styles for nodule drawing */
-.polygon-controls {
+  
+  /* Polygon controls */
+  .polygon-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 8px;
+    padding-top: 8px;
     border-top: 1px dashed rgba(243, 12, 12, 0.3);
   }
   
@@ -137,8 +145,9 @@
   .polygon-controls .toolbar-button:hover {
     background-color: rgba(255, 0, 0, 0.2);
   }
-  /* Add specific styles for different annotation types */
-.toolbar-button[data-type="nodule"] {
+  
+  /* Toolbar button type borders */
+  .toolbar-button[data-type="nodule"] {
     border-left: 3px solid red;
   }
   
@@ -150,7 +159,7 @@
     border-left: 3px solid purple;
   }
   
-  /* Active state colors */
+  /* Active type-specific styles */
   .toolbar-button.active[data-type="nodule"] {
     background-color: rgba(255, 0, 0, 0.1);
   }
@@ -162,19 +171,16 @@
   .toolbar-button.active[data-type="zemin-parenkim"] {
     background-color: rgba(128, 0, 128, 0.1);
   }
-
-  /* Add to FabricDrawing.css */
-.toolbar-section.save-load {
-    border-top: 1px solid #eee;
-    margin-top: 20px;
-    padding-top: 20px;
+  
+  /* Instruction box */
+  .instruction {
+    font-size: 12px;
+    color: #666;
+    font-style: italic;
+    margin-top: 5px;
+    padding: 5px;
+    background: #f8f8f8;
+    border-radius: 4px;
+    border-left: 3px solid #ddd;
   }
   
-  .save-load-buttons {
-    display: flex;
-    gap: 10px;
-  }
-  
-  .save-load-buttons button {
-    flex: 1;
-  }

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import {
   List,
   Card,
@@ -19,7 +19,7 @@ import { shapeOptionsMap ,propertyFields,fieldLabels} from "../../shapeOptions";
 const { Panel } = Collapse;
 
 
-const ShapeInventory = ({ canvas }) => {
+const ShapeInventory = ({ canvas,isEditable }) => {
   const [selectedShape, setSelectedShape] = useState(null);
   const [shapeProperties, setShapeProperties] = useState({});
   const [activePanel, setActivePanel] = useState([
@@ -107,7 +107,6 @@ const categories
 
     return shapes;
   };
-
   const handleShapeClick = (shape) => {
     if (!canvas) return;
 
@@ -185,10 +184,17 @@ const categories
         shapeOptionsMap={shapeOptionsMap}
         fieldLabels={fieldLabels}
         onSave={handlePropertiesSave}
+        isEditable={isEditable}
+        
       />
     );
   };
+  useEffect(() => {
+    console.log("isEditable",isEditable );
 
+    
+    // Add any other logic you want to trigger on change
+  }, [isEditable]);
   return (
     <div className="inventory-container">
       <Card

@@ -12,7 +12,7 @@ const FabricFreeDraw = () => {
   // Initialize canvas
   useEffect(() => {
     const canvasInstance = new fabric.Canvas(canvasRef.current, {
-      isDrawingMode: false, // We'll handle drawing manually
+      isDrawingMode: false, 
       selection: false,
       backgroundColor: '#f0f0f0'
     });
@@ -32,6 +32,7 @@ const FabricFreeDraw = () => {
 
     const handleMouseDown = (e) => {
       if (!e.absolutePointer) return;
+      
       
       setIsDrawing(true);
       const pointer = e.absolutePointer;

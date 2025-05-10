@@ -16,6 +16,8 @@ const categories = [
 
 const useShapeData = () => {
   const [shapeData, setShapeData] = useState([]);
+  const [isArtifacted, setIsArtifacted] = useState(exampleData.artifacted ?? true);
+
 
   useEffect(() => {
     const extractedShapeData = [];
@@ -45,11 +47,12 @@ const useShapeData = () => {
         });
       }
     });
+  
 
     setShapeData(extractedShapeData);
   }, []); // Empty dependency array, so it runs once on component mount
 
-  return shapeData;
+  return { shapeData, isArtifacted ,setIsArtifacted};
 };
 
 export default useShapeData;

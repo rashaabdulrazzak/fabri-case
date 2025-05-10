@@ -6,6 +6,7 @@ import { useCanvasState } from '../hooks/useCanvasState';
 import useShapeData from '../hooks/useShapeData';
 import ShapeInventory from './ShapeInventory/ShapeInventory';
 import { fabric } from 'fabric';
+import { Lock } from 'lucide-react';
 
 import Toolbar from './Toolbar/Toolbar';
 import './FabricDrawing.css';
@@ -66,7 +67,8 @@ const FabricDrawing = () => {
     'macroCalcifications',
     'peripheralRimCalcifications'
   ], []);
-  const shapeData = useShapeData();
+  const {shapeData,isArtifacted} = useShapeData();
+  const [isEditable, setIsEditable] = useState(isArtifacted);
   
   const drawShapesFromData = React.useCallback((canvas, shapeData) => {
     if (!canvas || !shapeData) return;
@@ -207,6 +209,8 @@ const FabricDrawing = () => {
     let lastPosX, lastPosY;
 
     canvas.on('mouse:down', (opt) => {
+      if (!isEditable) return;
+
       if (opt.e.altKey) {
         isDragging = true;
         lastPosX = opt.e.clientX;
@@ -215,6 +219,8 @@ const FabricDrawing = () => {
     });
 
     canvas.on('mouse:move', (opt) => {
+      if (!isEditable) return;
+      if (!isDragging) return;
       if (isDragging) {
         const e = opt.e;
         const vpt = canvas.viewportTransform;
@@ -227,6 +233,7 @@ const FabricDrawing = () => {
     });
 
     canvas.on('mouse:up', () => {
+      if (!isEditable) return;
       isDragging = false;
     });
 
@@ -272,7 +279,6 @@ const FabricDrawing = () => {
   
   
   
-  
   // Load saved state on initial render
   useEffect(() => {
     loadFromLocalStorage();
@@ -280,37 +286,59 @@ const FabricDrawing = () => {
 
   return (
     <div className="fabric-drawing-container">
-         <ShapeInventory canvas={canvas} key={inventoryVersion} />
-      <Toolbar
-        imageUrl={imageUrl}
-        drawingMode={drawingMode}
-        setDrawingMode={setDrawingMode}
-        drawingType={drawingType}
-        setDrawingType={setDrawingType}
-        completePolygon={completePolygon}
-        handleImageUpload={handleImageUpload}
-        handleImageReset={handleImageReset}
-        handleImageDownload={handleImageDownload}
-        handleImageClear={() => handleImageClear(imageUrl)}
-        handleImageSave={handleImageSave}
-        handleImageUndo={handleImageUndo}
-        handleImageZoomIn={handleImageZoomIn}
-        handleImageZoomOut={handleImageZoomOut}
-        handleImagePanStart={handleImagePanStart}
-        handleImagePanEnd={handleImagePanEnd}
-        handleImagePanReset={handleImagePanReset}
-        saveCanvasState={saveToLocalStorage}
-        loadSavedState={loadFromLocalStorage}
+  <ShapeInventory canvas={canvas} key={inventoryVersion} isEditable={isEditable} />
+
+  <Toolbar
+    imageUrl={imageUrl}
+    isEditable={isEditable}
+    drawingMode={drawingMode}
+    setDrawingMode={setDrawingMode}
+    drawingType={drawingType}
+    setDrawingType={setDrawingType}
+    completePolygon={completePolygon}
+    handleImageUpload={handleImageUpload}
+    handleImageReset={handleImageReset}
+    handleImageDownload={handleImageDownload}
+    handleImageClear={() => handleImageClear(imageUrl)}
+    handleImageSave={handleImageSave}
+    handleImageUndo={handleImageUndo}
+    handleImageZoomIn={handleImageZoomIn}
+    handleImageZoomOut={handleImageZoomOut}
+    handleImagePanStart={handleImagePanStart}
+    handleImagePanEnd={handleImagePanEnd}
+    handleImagePanReset={handleImagePanReset}
+    saveCanvasState={saveToLocalStorage}
+    loadSavedState={loadFromLocalStorage}
+  />
+
+  {/* Canvas and Toggle grouped together */}
+  <div className="canvas-section">
+    <label className="canvas-toggle">
+      <input
+        type="checkbox"
+        checked={isEditable}
+        onChange={(e) => setIsEditable(e.target.checked)}
       />
-      
-      <div className="canvas-container">
-        <canvas
-          ref={canvasRef}
-          width={800}
-          height={600}
-        />
-      </div>
+      Image Artifacted Editing
+    </label>
+
+    <div className="canvas-container relative">
+      <canvas
+        ref={canvasRef}
+        width={800}
+        height={600}
+      />
+      {!isEditable && (
+        <div className="lock-overlay">
+          <Lock size={18} color="white" />
+          Annotation is disabled
+        </div>
+      )}
     </div>
+  </div>
+   </div>
+
+    
   );
 };
 
