@@ -1,7 +1,7 @@
 import { useCallback, useState, useEffect } from 'react';
 import { fabric } from 'fabric';
 
-export const useDrawingTools = (canvas) => {
+export const useDrawingTools = (canvas,isEditable) => {
   const [drawingMode, setDrawingMode] = useState(null);
   const [polygonPoints, setPolygonPoints] = useState([]);
   const [isDrawingRect, setIsDrawingRect] = useState(false);
@@ -342,6 +342,19 @@ const savePolygonData = (polygon) => {
     
     canvas.renderAll();
   }, [canvas, isDrawingRect, rectStartPoint, currentRect]);
+  
+  const handleMouseDown = useCallback((e) => {
+  if (!canvas || drawingMode !== 'rectangle') return;
+
+  const pointer = canvas.getPointer(e.e);
+  const startX = pointer.x;
+  const startY = pointer.y;
+
+  const rect = drawRectangle(startX, startY, 1, 1);
+  setRectStartPoint({ x: startX, y: startY });
+  setCurrentRect(rect);
+  setIsDrawingRect(true);
+}, [canvas, drawingMode, drawRectangle]);
 
   const handleCanvasClick = useCallback((e) => {
     if (!canvas || (!drawingMode && !isPlacingCircle)) return;
@@ -370,6 +383,16 @@ const savePolygonData = (polygon) => {
       }
     }
   }, [canvas, drawingMode, isPlacingCircle, drawCircle, finalizeCircle, handlePolygonClick, isDrawingRect, drawRectangle]);
+useEffect(() => {
+  if (!canvas || isEditable) return;
+
+  const handleMouseDown = (e) => e.e.preventDefault(); // Disable drawing clicks
+  canvas.on('mouse:down', handleMouseDown);
+
+  return () => {
+    canvas.off('mouse:down', handleMouseDown);
+  };
+}, [canvas, isEditable]);
 
   return {
     drawingMode,
