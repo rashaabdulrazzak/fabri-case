@@ -28,6 +28,15 @@ export const useDrawingTools = (canvas,isEditable) => {
           lineColor: 'purple'
         };
       case 'nodule':
+            case 'bounding-box':
+      return {
+        fill: 'transparent',
+        stroke: '#00FF00', // Bright green
+        strokeWidth: 2,
+        strokeDashArray: [5, 5], // Dashed line
+        pointColor: '#00FF00',
+        lineColor: '#00FF00'
+      };
       default:
         return {
           fill: 'rgba(255, 0, 0, 0.2)', // Red
@@ -40,37 +49,37 @@ export const useDrawingTools = (canvas,isEditable) => {
 
 
   // Clean up all temporary drawing objects
-  const cleanUpDrawing = useCallback(() => {
-    if (!canvas) return;
+const cleanUpDrawing = useCallback(() => {
+  if (!canvas) return;
 
-    // Remove temporary polygon lines and points
-    if (drawingMode === 'polygon') {
-      canvas.getObjects().forEach((obj) => {
-        if (obj.type === 'line' || (obj.type === 'circle' && obj.radius === 5)) {
-          canvas.remove(obj);
-        }
-      });
-      setPolygonPoints([]);
-    }
-    
-    // Remove unfinished rectangle
-    if (drawingMode === 'rectangle' && currentRect) {
-      canvas.remove(currentRect);
-      setCurrentRect(null);
-    }
-    
-    // Remove unfinished circle
-    if (drawingMode === 'circle' && isPlacingCircle && currentCircle) {
-      canvas.remove(currentCircle);
-      setCurrentCircle(null);
-    }
+  // Remove temporary polygon lines and points
+  if (drawingMode === 'polygon') {
+    canvas.getObjects().forEach((obj) => {
+      if (obj.type === 'line' || (obj.type === 'circle' && obj.radius === 5)) {
+        canvas.remove(obj);
+      }
+    });
+    setPolygonPoints([]);
+  }
+  
+  // Remove unfinished rectangle or bounding box
+  if ((drawingMode === 'rectangle' || drawingMode === 'bounding-box') && currentRect) {
+    canvas.remove(currentRect);
+    setCurrentRect(null);
+  }
+  
+  // Remove unfinished circle
+  if (drawingMode === 'circle' && isPlacingCircle && currentCircle) {
+    canvas.remove(currentCircle);
+    setCurrentCircle(null);
+  }
 
-    setIsDrawingRect(false);
-    setIsPlacingCircle(false);
-    setRectStartPoint(null);
-    setDrawingMode(null);
-    canvas.renderAll();
-  }, [canvas, drawingMode, currentRect, isPlacingCircle, currentCircle]);
+  setIsDrawingRect(false);
+  setIsPlacingCircle(false);
+  setRectStartPoint(null);
+  setDrawingMode(null);
+  canvas.renderAll();
+}, [canvas, drawingMode, currentRect, isPlacingCircle, currentCircle]);
 
   // Handle ESC key press
   useEffect(() => {
@@ -99,7 +108,8 @@ export const useDrawingTools = (canvas,isEditable) => {
       selectable: true,
       hasControls: true,
       hasBorders: true,
-      dataType: 'circle' // Custom data attribute
+      dataType: 'circle' ,// Custom data attribute
+       properties: {} 
     });
     
     setCurrentCircle(circle);
@@ -114,26 +124,30 @@ export const useDrawingTools = (canvas,isEditable) => {
     setDrawingMode(null);
   }, []);
 
-  const drawRectangle = useCallback((x, y, width, height) => {
-    if (!canvas) return null;
-    
-    const rect = new fabric.Rect({
-      left: x,
-      top: y,
-      width: width,
-      height: height,
-      fill: 'transparent',
-      stroke: 'green',
-      strokeWidth: 2,
-      selectable: true,
-      hasControls: true,
-      hasBorders: true,
-       dataType: 'rectangle'
-    });
-    
-    canvas.add(rect);
-    return rect;
-  }, [canvas]);
+const drawRectangle = useCallback((x, y, width, height, type = 'rectangle') => {
+  if (!canvas) return null;
+  
+  const style = getDrawingStyle(type);
+  
+  const rect = new fabric.Rect({
+    left: x,
+    top: y,
+    width: width,
+    height: height,
+    fill: style.fill,
+    stroke: style.stroke,
+    strokeWidth: style.strokeWidth || 2,
+    strokeDashArray: style.strokeDashArray,
+    selectable: true,
+    hasControls: true,
+    hasBorders: true,
+    dataType: type,
+     properties: {} // Custom properties
+  });
+  
+  canvas.add(rect);
+  return rect;
+}, [canvas]);
  
   function enablePolygonEditing(polygon, canvas) {
     polygon.edit = true;
@@ -343,56 +357,57 @@ const savePolygonData = (polygon) => {
     canvas.renderAll();
   }, [canvas, isDrawingRect, rectStartPoint, currentRect]);
   
-  const handleMouseDown = useCallback((e) => {
-  if (!canvas || drawingMode !== 'rectangle') return;
+const handleMouseDown = useCallback((e) => {
+  if (!canvas || (drawingMode !== 'rectangle' && drawingMode !== 'bounding-box')) return;
 
   const pointer = canvas.getPointer(e.e);
   const startX = pointer.x;
   const startY = pointer.y;
 
-  const rect = drawRectangle(startX, startY, 1, 1);
+  const rect = drawRectangle(startX, startY, 1, 1, drawingMode === 'bounding-box' ? 'bounding-box' : 'rectangle');
   setRectStartPoint({ x: startX, y: startY });
   setCurrentRect(rect);
   setIsDrawingRect(true);
 }, [canvas, drawingMode, drawRectangle]);
 
-  const handleCanvasClick = useCallback((e) => {
-    if (!canvas || (!drawingMode && !isPlacingCircle)) return;
+const handleCanvasClick = useCallback((e) => {
+  if (!canvas || (!drawingMode && !isPlacingCircle)) return;
 
-    const pointer = canvas.getPointer(e.e);
+  const pointer = canvas.getPointer(e.e);
 
-    if (drawingMode === 'circle' || isPlacingCircle) {
-      if (!isPlacingCircle) {
-        drawCircle(pointer.x, pointer.y);
-      } else {
-        finalizeCircle();
-      }
-    } else if (drawingMode === 'polygon') {
-      handlePolygonClick(pointer.x, pointer.y);
-    } else if (drawingMode === 'rectangle') {
-      if (!isDrawingRect) {
-        setIsDrawingRect(true);
-        setRectStartPoint(pointer);
-        const rect = drawRectangle(pointer.x, pointer.y, 1, 1);
-        setCurrentRect(rect);
-      } else {
-        setIsDrawingRect(false);
-        setRectStartPoint(null);
-        setCurrentRect(null);
-        setDrawingMode(null);
-      }
+  if (drawingMode === 'circle' || isPlacingCircle) {
+    if (!isPlacingCircle) {
+      drawCircle(pointer.x, pointer.y);
+    } else {
+      finalizeCircle();
     }
-  }, [canvas, drawingMode, isPlacingCircle, drawCircle, finalizeCircle, handlePolygonClick, isDrawingRect, drawRectangle]);
+  } else if (drawingMode === 'polygon') {
+    handlePolygonClick(pointer.x, pointer.y);
+  } else if (drawingMode === 'rectangle' || drawingMode === 'bounding-box') {
+    if (!isDrawingRect) {
+      setIsDrawingRect(true);
+      setRectStartPoint(pointer);
+      const rect = drawRectangle(pointer.x, pointer.y, 1, 1, drawingMode === 'bounding-box' ? 'bounding-box' : 'rectangle');
+      setCurrentRect(rect);
+    } else {
+      setIsDrawingRect(false);
+      setRectStartPoint(null);
+      setCurrentRect(null);
+      setDrawingMode(null);
+    }
+  }
+}, [canvas, drawingMode, isPlacingCircle, drawCircle, finalizeCircle, handlePolygonClick, isDrawingRect, drawRectangle]);
+
 useEffect(() => {
   if (!canvas || isEditable) return;
 
-  const handleMouseDown = (e) => e.e.preventDefault(); // Disable drawing clicks
+  //const handleMouseDown = (e) => e.e.preventDefault(); // Disable drawing clicks
   canvas.on('mouse:down', handleMouseDown);
 
   return () => {
     canvas.off('mouse:down', handleMouseDown);
   };
-}, [canvas, isEditable]);
+}, [canvas, handleMouseDown, isEditable]);
 
   return {
     drawingMode,

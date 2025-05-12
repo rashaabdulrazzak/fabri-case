@@ -123,7 +123,15 @@ export default function IconOnlyToolbar({
           className={drawingType === "zemin-parenkim" ? "ant-menu-item-selected" : ""}
         />
       </Tooltip>
-
+      <Tooltip title="Draw Bounding Box" placement="right">
+         <MenuItem 
+    key="bounding-box" 
+    icon={<BorderOutlined />}
+    onClick={() => setDrawingMode("bounding-box")}
+    disabled={!imageUrl || !isEditable}
+    className={drawingMode === "bounding-box" ? "ant-menu-item-selected" : ""}
+  />
+      </Tooltip>
 
       {/* Edit Tools */}
       <Tooltip title="Undo" placement="right">

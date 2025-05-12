@@ -201,16 +201,3 @@
   width: 100%;
 }
 
-#canvas {
-  flex: 1;
-  background-color: #f3f3f3;
-}
-
-.shape-inventory {
-  width: 250px;
-  background-color: #fff;
-  border-left: 1px solid #ccc;
-  padding: 16px;
-  overflow-y: auto;
-}
-  

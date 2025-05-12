@@ -196,7 +196,7 @@ const categories
     // Add any other logic you want to trigger on change
   }, [isEditable]);
   return (
-    <div className="inventory-container">
+    <div className="inventory-wrapper">
       <Card
         title="Shape Inventory"
         bordered={false}
@@ -349,19 +349,20 @@ const categories
                 selectedShape={selectedShape}
                 onClick={handleShapeClick}
                 />
-            </Panel>
+            </Panel>  
         </Collapse>
       </Card>
 
-      {selectedShape && (
-        <Card
-          title="Shape Properties"
-          bordered={false}
-          className="property-editor-card"
-        >
+  <div className="property-editor-container">
+      {selectedShape ? (
+        <Card title="Shape Properties" bordered={false}>
           {renderPropertyEditor()}
         </Card>
+      ) : (
+        <div className="empty-state">No shape selected</div>
       )}
+    </div>
+
     </div>
   );
 };
