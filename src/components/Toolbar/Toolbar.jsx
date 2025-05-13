@@ -41,7 +41,8 @@ export default function IconOnlyToolbar({
   handleImagePanStart,
   handleImagePanReset,
   saveCanvasState,
-  loadSavedState
+  loadSavedState,
+  startPolygonDrawing
 }) {
   return (
     <Menu

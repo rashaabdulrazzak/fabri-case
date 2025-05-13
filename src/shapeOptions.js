@@ -2,25 +2,24 @@
 
 export const shapeOptionsMap = {
   composition: [
-    "Solid",
-    "Predominantly Solid",
-    "Spongiform",
-    "Mixed cystic and solid",
-    "Cystic",
+  "Cystic or almost completely cystic",
+  "Spongiform",
+  "Mixed cystic and solid",
+  "Solid or almost completely solid"
   ],
   echogenicity: [
     "Anechoic",
-    "Hyperechoic",
-    "Isoechoic",
+    "Hyperechoic or isoechoic",
+    "Hypoechoic",
     "Hypoechoic",
     "Very hypoechoic",
   ],
   shape: ["Wider-than-tall", "Taller-than-wide"],
-  margin: ["Smooth", "Irregular", "Lobulated", "Extrathyroidal extension"],
+  margin: ["Smooth", "Ill-defined", "Lobulated/irregular", "Extra-thyroidal extension"],
   echogenicFoci: [
-    "None",
+    "None or large comet-tail artifact",
     "Macrocalcifications",
-    "Peripheral (rim) calcifications",
+    "Peripheral/rim calcifications",
     "Punctate echogenic foci",
   ],
   measured: ["Yes", "No"],

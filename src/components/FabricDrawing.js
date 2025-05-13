@@ -10,6 +10,7 @@
 
   import Toolbar from './Toolbar/Toolbar';
   import './FabricDrawing.css';
+import { drawShapesFromData } from '../hooks/fabricHelpers';
 
 
   const FabricDrawing = () => {
@@ -69,9 +70,10 @@
       completePolygon,
       cleanUpDrawing,
       isPlacingCircle,
+      startPolygonDrawing
     } = useDrawingTools(canvas,isEditable);
     
-    const drawShapesFromData = React.useCallback((canvas, shapeData) => {
+   /* const drawShapesFromData = React.useCallback((canvas, shapeData) => {
       if (!canvas || !shapeData) return;
     
       // Step 1: Group the array by category
@@ -131,7 +133,7 @@
       updateInventory();
 
       canvas.renderAll();
-    }, [shapeCategories]);
+    }, [shapeCategories]);*/
     
     
 
@@ -155,9 +157,9 @@
     useEffect(() => {
       if (canvas && shapeData) {
       
-        drawShapesFromData(canvas, shapeData);
+        drawShapesFromData(canvas, shapeData, shapeCategories, updateInventory);
       }
-    }, [canvas, drawShapesFromData, shapeData]);
+    }, [canvas, shapeData]);
     // Handle image upload
     const handleImageUpload = (e) => {
       const file = e.target.files[0];
@@ -310,6 +312,7 @@
       handleImagePanReset={handleImagePanReset}
       saveCanvasState={saveToLocalStorage}
       loadSavedState={loadFromLocalStorage}
+      startPolygonDrawing={startPolygonDrawing}
     />
 
     {/* Canvas and Toggle grouped together */}

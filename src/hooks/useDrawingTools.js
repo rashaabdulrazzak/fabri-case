@@ -198,6 +198,11 @@ const savePolygonData = (polygon) => {
   
     // You can send this to a server or store it in state
   };
+  const startPolygonDrawing = (type) => {
+  setDrawingType(type);
+  setDrawingMode('polygon');
+  setPolygonPoints([]);
+};
     // Make the polygon editable
     useEffect(() => {
         if (!canvas) return;
@@ -327,15 +332,16 @@ const savePolygonData = (polygon) => {
   
     if (polygonPoints.length > 0) {
       const prevPoint = polygonPoints[polygonPoints.length - 1];
+      const style = getDrawingStyle(drawingType);
       const line = new fabric.Line([prevPoint.x, prevPoint.y, x, y], {
-        stroke: 'red',
+        stroke: style.lineColor || 'red',
         selectable: false,
       });
       canvas.add(line);
     }
   
     setPolygonPoints(prev => [...prev, newPoint]);
-  }, [canvas, polygonPoints, completePolygon]);
+  }, [polygonPoints, completePolygon, drawingType, canvas]);
   
   const handleMouseMove = useCallback((e) => {
     if (!canvas || !isDrawingRect || !rectStartPoint || !currentRect) return;
@@ -421,5 +427,6 @@ useEffect(() => {
     isPlacingCircle,
      drawingType,
   setDrawingType,
+  startPolygonDrawing
   };
 };
